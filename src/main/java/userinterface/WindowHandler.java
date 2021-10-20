@@ -6,6 +6,8 @@ import core.SlotMachine;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 public class WindowHandler {
@@ -29,6 +31,16 @@ public class WindowHandler {
         window.add(component);
         window.setSize(640, 860);
         window.setResizable(false);
+        window.setLocationRelativeTo(null);
+
+        window.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Logger.info("Exiting program...");
+                System.exit(-1);
+            }
+        });
+
         try {
             Logger.trace("Reading icon image...");
 
