@@ -17,6 +17,8 @@ public class WindowHandler {
     public static void open() {
         Logger.trace("Opening window...");
 
+        CustomFont.registerAll();
+
         JComponent component = new JComponent() {
 
             @Override
