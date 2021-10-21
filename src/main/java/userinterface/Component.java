@@ -3,6 +3,7 @@ package userinterface;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.image.ImageObserver;
 
 public class Component {
 
@@ -18,7 +19,7 @@ public class Component {
         this.height = height;
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics g, ImageObserver observer) {
 
     }
 
