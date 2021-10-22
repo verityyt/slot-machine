@@ -54,14 +54,14 @@ public class GradientButtonComponent extends Component {
                 @Override
                 public void run() {
                     while (true) {
-                        if (homeScreen.currentlySpinning) {
-                            try {
-                                Thread.sleep(10);
-                                rotation += 0.1;
-                            } catch (Exception e) {
-                                Logger.error(e.getMessage());
-                            }
-                        } else {
+                        try {
+                            Thread.sleep(10);
+                            rotation += 0.1;
+                        } catch (Exception e) {
+                            Logger.error(e.getMessage());
+                        }
+
+                        if (!homeScreen.currentlySpinning && (Math.toDegrees(rotation) % 360) < 10) {
                             rotation = 0;
                             isRotating = false;
                             break;
