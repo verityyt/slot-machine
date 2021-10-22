@@ -10,13 +10,43 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.util.ArrayList;
 
 public class HomeScreen extends Screen {
 
-    public HomeScreen() {
-        SpinWheelComponent spinWheel = new SpinWheelComponent(100, 215, 50, 50);
+    private boolean drawShowResultRect = true;
 
-        components.add(spinWheel);
+    public HomeScreen() {
+        SpinWheelComponent firstSpinWheel = new SpinWheelComponent(1, 100, 215, 50, 50);
+        SpinWheelComponent secondSpinWheel = new SpinWheelComponent(2, 255, 215, 50, 50);
+        SpinWheelComponent thirdSpinWheel = new SpinWheelComponent(3, 410, 215, 50, 50);
+
+        components.add(firstSpinWheel);
+        components.add(secondSpinWheel);
+        components.add(thirdSpinWheel);
+
+        ArrayList<SpinWheelComponent> finished = new ArrayList<>();
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    for (Component component : components) {
+                        if (component instanceof SpinWheelComponent) {
+                            if (!((SpinWheelComponent) component).rolling) {
+                                finished.add(((SpinWheelComponent) component));
+                            }
+                        }
+                    }
+
+                    if (finished.contains(firstSpinWheel) && finished.contains(secondSpinWheel) && finished.contains(thirdSpinWheel)) {
+                        animateResultRect();
+                        break;
+                    }
+                }
+            }
+        }.start();
+
     }
 
     @Override
@@ -24,6 +54,15 @@ public class HomeScreen extends Screen {
 
         for (Component component : components) {
             component.draw(g, observer);
+        }
+
+        if (drawShowResultRect) {
+            int rectWidth = (3 * 125) + (30 * 2) + 20;
+            GradientPaint gradient = new GradientPaint(90, 360, Color.decode("#4834D4"), 90 + rectWidth, 505, Color.decode("#B500FF"));
+
+            ((Graphics2D) g).setPaint(gradient);
+            ((Graphics2D) g).setStroke(new BasicStroke(3f));
+            g.drawRoundRect(90, 360, rectWidth, 145, 10, 10);
         }
 
         try {
@@ -36,6 +75,25 @@ public class HomeScreen extends Screen {
         g.setFont(CustomFont.medium.deriveFont(40f));
         g.drawString("SLOT MACHINE", 215, 120);
 
+    }
+
+    private void animateResultRect() {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    int count = 0;
+
+                    while(count < 10) {
+                        Thread.sleep(250);
+                        drawShowResultRect = !drawShowResultRect;
+                        count ++;
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+        }.start();
     }
 
 }
