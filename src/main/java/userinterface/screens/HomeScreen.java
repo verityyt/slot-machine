@@ -28,9 +28,9 @@ public class HomeScreen extends Screen {
     private int spinImageRotation = 0;
 
     public HomeScreen() {
-        SpinWheelComponent firstSpinWheel = new SpinWheelComponent(1, 100, 215, 50, 50);
-        SpinWheelComponent secondSpinWheel = new SpinWheelComponent(2, 255, 215, 50, 50);
-        SpinWheelComponent thirdSpinWheel = new SpinWheelComponent(3, 410, 215, 50, 50);
+        SpinWheelComponent firstSpinWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
+        SpinWheelComponent secondSpinWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
+        SpinWheelComponent thirdSpinWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
 
         components.add(firstSpinWheel);
         components.add(secondSpinWheel);
@@ -73,14 +73,18 @@ public class HomeScreen extends Screen {
             component.draw(g, observer);
         }
 
+        /* RESULT RECT */
+
         if (drawShowResultRect) {
             int rectWidth = (3 * 125) + (30 * 2) + 20;
-            GradientPaint rectGradient = new GradientPaint(90, 360, Color.decode("#4834D4"), 90 + rectWidth, 505, Color.decode("#B500FF"));
+            GradientPaint rectGradient = new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF"));
 
             ((Graphics2D) g).setPaint(rectGradient);
             ((Graphics2D) g).setStroke(new BasicStroke(3f));
-            g.drawRoundRect(90, 360, rectWidth, 145, 10, 10);
+            g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
         }
+
+        /* HEADER */
 
         try {
             g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 105, 60, 95, 95, observer);
@@ -92,21 +96,23 @@ public class HomeScreen extends Screen {
         g.setFont(CustomFont.medium.deriveFont(40f));
         g.drawString("SLOT MACHINE", 205, 120);
 
-        GradientPaint spinGradient = new GradientPaint(230, 750, Color.decode("#4834D4"), 410, 750, Color.decode("#B500FF"));
+        /* SPIN BUTTON */
+
+        GradientPaint spinGradient = new GradientPaint(230, 715, Color.decode("#4834D4"), 410, 715, Color.decode("#B500FF"));
         ((Graphics2D) g).setPaint(spinGradient);
-        g.fillRoundRect(230, 700, 180, 50, 50, 50);
+        g.fillRoundRect(230, 665, 180, 50, 50, 50);
 
         if (hoverSpinButton) {
             g.setColor(Color.black);
             ((Graphics2D) g).setStroke(new BasicStroke(2f));
-            g.drawRoundRect(230, 700, 180, 50, 50, 50);
+            g.drawRoundRect(230, 665, 180, 50, 50, 50);
         }
 
         try {
             BufferedImage image = resize(ImageIO.read(new File("assets/images/home/spin.png")), 25, 25);
 
             AffineTransform transform = new AffineTransform();
-            transform.translate(370, 712);
+            transform.translate(370, 677);
             transform.rotate(Math.toRadians(spinImageRotation), 25 / 2, 25 / 2);
 
             ((Graphics2D) g).drawImage(image, transform, observer);
@@ -116,13 +122,13 @@ public class HomeScreen extends Screen {
 
         g.setColor(Color.white);
         g.setFont(CustomFont.light.deriveFont(24f));
-        g.drawString("SPIN", 295, 733);
+        g.drawString("SPIN", 295, 698);
 
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 725 && e.getY() < 775) {
+        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
             WindowHandler.window.setCursor(new Cursor(Cursor.HAND_CURSOR));
             if (!spinOutlineAnimation) {
                 hoverSpinButton = true;
@@ -137,7 +143,7 @@ public class HomeScreen extends Screen {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 725 && e.getY() < 775) {
+        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
             animateSpinImage();
 
             for (Component component : components) {
