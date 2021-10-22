@@ -2,6 +2,7 @@ package userinterface.screens;
 
 import userinterface.Component;
 import userinterface.Screen;
+import userinterface.components.GradientBadgeComponent;
 import userinterface.components.GradientButtonComponent;
 import userinterface.components.SpinWheelComponent;
 import utils.CustomFont;
@@ -23,6 +24,8 @@ public class HomeScreen extends Screen {
     public boolean currentlySpinning = false;
     private boolean drawResultHighlighter = true;
     private boolean isResultHighlighterAnimationRunning = false;
+    private GradientBadgeComponent balanceBadge;
+    private GradientBadgeComponent streakBadge;
 
     public HomeScreen() {
         SpinWheelComponent firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
@@ -32,6 +35,10 @@ public class HomeScreen extends Screen {
         try {
             GradientButtonComponent spinButton = new GradientButtonComponent(230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
+            balanceBadge = new GradientBadgeComponent(85, 730, 135, 40, "YOUR BALANCE:", "0.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
+            components.add(balanceBadge);
+            streakBadge = new GradientBadgeComponent(430, 730, 135, 40, "CURRENT STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
+            components.add(streakBadge);
         } catch (IOException e) {
             Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
         }
