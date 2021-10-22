@@ -5,6 +5,9 @@ import java.util.Date;
 
 public class Logger {
 
+    private static final boolean enableDebug = true;
+    private static final boolean enableTrace = true;
+
     private static final String ANSI_RESET = "\u001B[0m";
     private static final String ANSI_BLACK = "\u001B[30m";
     private static final String ANSI_RED = "\u001B[31m";
@@ -22,13 +25,17 @@ public class Logger {
     }
 
     public static void debug(String text) {
-        String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
-        System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_CYAN + "DEBUG" + ANSI_GREY + "] " + ANSI_RESET + text);
+        if(enableDebug) {
+            String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
+            System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_CYAN + "DEBUG" + ANSI_GREY + "] " + ANSI_RESET + text);
+        }
     }
 
     public static void trace(String text) {
-        String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
-        System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_PURPLE + "TRACE" + ANSI_GREY + "] " + ANSI_RESET + text);
+        if(enableTrace) {
+            String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
+            System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_PURPLE + "TRACE" + ANSI_GREY + "] " + ANSI_RESET + text);
+        }
     }
 
     public static void warn(String text) {
