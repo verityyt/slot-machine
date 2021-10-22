@@ -10,6 +10,8 @@ import utils.Logger;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,6 +23,9 @@ public class HomeScreen extends Screen {
     private boolean hoverSpinButton = false;
     private boolean spinOutlineAnimation = false;
     private boolean resultRectAnimation = false;
+    private boolean currentlySpinning = false;
+
+    private int spinImageRotation = 0;
 
     public HomeScreen() {
         SpinWheelComponent firstSpinWheel = new SpinWheelComponent(1, 100, 215, 50, 50);
@@ -36,17 +41,29 @@ public class HomeScreen extends Screen {
             public void run() {
                 while (true) {
                     if (finishedWheels.contains(firstSpinWheel) && finishedWheels.contains(secondSpinWheel) && finishedWheels.contains(thirdSpinWheel)) {
-                        if(!resultRectAnimation) {
+                        if (!resultRectAnimation) {
                             animateResultRect();
+                            currentlySpinning = false;
                             finishedWheels.clear();
                         }
-                    }else {
+                    } else {
                         System.out.print("");
                     }
                 }
             }
         }.start();
 
+    }
+
+    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
+        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
+        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = dimg.createGraphics();
+        g2d.drawImage(tmp, 0, 0, null);
+        g2d.dispose();
+
+        return dimg;
     }
 
     @Override
@@ -86,7 +103,13 @@ public class HomeScreen extends Screen {
         }
 
         try {
-            g.drawImage(ImageIO.read(new File("assets/images/home/spin.png")), 370, 712, 25, 25, observer);
+            BufferedImage image = resize(ImageIO.read(new File("assets/images/home/spin.png")), 25, 25);
+
+            AffineTransform transform = new AffineTransform();
+            transform.translate(370, 712);
+            transform.rotate(Math.toRadians(spinImageRotation), 25 / 2, 25 / 2);
+
+            ((Graphics2D) g).drawImage(image, transform, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
         }
@@ -115,6 +138,8 @@ public class HomeScreen extends Screen {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getX() > 235 && e.getX() < 425 && e.getY() > 725 && e.getY() < 775) {
+            animateSpinImage();
+
             for (Component component : components) {
                 if (component instanceof SpinWheelComponent) {
                     SpinWheelComponent wheel = ((SpinWheelComponent) component);
@@ -141,6 +166,29 @@ public class HomeScreen extends Screen {
             }.start();
 
         }
+    }
+
+    private void animateSpinImage() {
+        currentlySpinning = true;
+
+        new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    if (currentlySpinning) {
+                        try {
+                            Thread.sleep(2);
+                            spinImageRotation++;
+                        } catch (Exception e) {
+
+                        }
+                    } else {
+                        spinImageRotation = 0;
+                        break;
+                    }
+                }
+            }
+        }.start();
     }
 
     private void animateResultRect() {
