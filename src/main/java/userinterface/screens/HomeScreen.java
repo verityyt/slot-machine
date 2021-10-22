@@ -83,14 +83,14 @@ public class HomeScreen extends Screen {
         }
 
         try {
-            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 115, 60, 95, 95, observer);
+            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 105, 60, 95, 95, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read logo image (" + e.getMessage() + ")");
         }
 
         g.setColor(Color.black);
         g.setFont(CustomFont.medium.deriveFont(40f));
-        g.drawString("SLOT MACHINE", 215, 120);
+        g.drawString("SLOT MACHINE", 205, 120);
 
         GradientPaint spinGradient = new GradientPaint(230, 750, Color.decode("#4834D4"), 410, 750, Color.decode("#B500FF"));
         ((Graphics2D) g).setPaint(spinGradient);
