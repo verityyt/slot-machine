@@ -23,6 +23,7 @@ public class HomeScreen extends Screen {
     private boolean hoverSpinButton = false;
     private boolean spinOutlineAnimation = false;
     private boolean resultRectAnimation = false;
+    private boolean interruptResultRectAnimation = false;
     private boolean currentlySpinning = false;
 
     private int spinImageRotation = 0;
@@ -165,6 +166,10 @@ public class HomeScreen extends Screen {
                         Thread.sleep(250);
                         hoverSpinButton = true;
                         spinOutlineAnimation = false;
+
+                        interruptResultRectAnimation = true;
+                        Thread.sleep(500);
+                        interruptResultRectAnimation = false;
                     } catch (Exception ex) {
 
                     }
@@ -207,6 +212,11 @@ public class HomeScreen extends Screen {
                     int count = 0;
 
                     while (count < 10) {
+                        if(interruptResultRectAnimation) {
+                            drawShowResultRect = true;
+                            break;
+                        }
+
                         Thread.sleep(250);
                         drawShowResultRect = !drawShowResultRect;
                         count++;
