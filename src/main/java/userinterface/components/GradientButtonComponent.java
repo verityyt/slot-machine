@@ -21,7 +21,7 @@ public class GradientButtonComponent extends Component {
     private final Color gradientEnd;
     private final int fontSize;
     public boolean isRotating = false;
-    public int rotation = 0;
+    public double rotation = 0.0;
     private HomeScreen homeScreen = null;
     private boolean isHovered = false;
 
@@ -56,8 +56,8 @@ public class GradientButtonComponent extends Component {
                     while (true) {
                         if (homeScreen.currentlySpinning) {
                             try {
-                                Thread.sleep(50);
-                                rotation++;
+                                Thread.sleep(10);
+                                rotation += 0.1;
                             } catch (Exception e) {
                                 Logger.error(e.getMessage());
                             }
