@@ -46,6 +46,7 @@ public class Logger {
     public static void error(String text) {
         String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
         System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_RED + "ERROR" + ANSI_GREY + "] " + ANSI_RESET + text);
+        System.exit(-1);
     }
 
 }
