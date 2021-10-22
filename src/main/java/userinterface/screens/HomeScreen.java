@@ -88,14 +88,14 @@ public class HomeScreen extends Screen {
         /* HEADER */
 
         try {
-            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 105, 60, 95, 95, observer);
+            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 105, 40, 95, 95, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read logo image (" + e.getMessage() + ")");
         }
 
         g.setColor(Color.black);
         g.setFont(CustomFont.medium.deriveFont(40f));
-        g.drawString("SLOT MACHINE", 205, 120);
+        g.drawString("SLOT MACHINE", 205, 100);
 
         /* SPIN BUTTON */
 
