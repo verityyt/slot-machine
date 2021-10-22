@@ -16,13 +16,13 @@ public class GradientButtonComponent extends Component {
 
     public static String text;
     private final int arc;
-    public boolean isRotating = false;
-    public int rotation = 0;
-    private HomeScreen homeScreen = null;
     private final BufferedImage image;
     private final Color gradientStart;
     private final Color gradientEnd;
     private final int fontSize;
+    public boolean isRotating = false;
+    public int rotation = 0;
+    private HomeScreen homeScreen = null;
     private boolean isHovered = false;
 
     public GradientButtonComponent(int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
@@ -56,7 +56,7 @@ public class GradientButtonComponent extends Component {
                     while (true) {
                         if (homeScreen.currentlySpinning) {
                             try {
-                                Thread.sleep(45);
+                                Thread.sleep(50);
                                 rotation++;
                             } catch (Exception e) {
                                 Logger.error(e.getMessage());
@@ -87,7 +87,7 @@ public class GradientButtonComponent extends Component {
             if (isHovered) {
                 g.setColor(Color.black);
                 g2d.setStroke(new BasicStroke(2f));
-                g.drawRoundRect(x, y, width, height, 50, 50);
+                g.drawRoundRect(x, y, width, height, arc, arc);
             }
 
 
@@ -110,57 +110,68 @@ public class GradientButtonComponent extends Component {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
+        if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
             WindowHandler.window.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            if (!homeScreen.isSpinOutlineAnimationRunning) {
-                isHovered = true;
+            switch (text) {
+                case "SPIN": {
+                    if (!homeScreen.isSpinOutlineAnimationRunning) {
+                        isHovered = true;
+                    }
+                }
             }
         } else {
             WindowHandler.window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            if (!homeScreen.isSpinOutlineAnimationRunning) {
-                isHovered = false;
+            switch (text) {
+                case "SPIN": {
+                    if (!homeScreen.isSpinOutlineAnimationRunning) {
+                        isHovered = false;
+                    }
+                }
             }
         }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
-            if (!homeScreen.currentlySpinning) {
-                homeScreen.animateSpinImage();
-            }
-
-            for (Component component : homeScreen.components) {
-                if (component instanceof SpinWheelComponent) {
-                    SpinWheelComponent wheel = ((SpinWheelComponent) component);
-                    if (!wheel.isRolling) {
-                        Logger.trace("Start spin wheel #" + wheel.index);
-                        wheel.roll();
+        if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
+            switch (text) {
+                case "SPIN": {
+                    if (!homeScreen.currentlySpinning) {
+                        homeScreen.animateSpinImage();
                     }
+
+                    for (Component component : homeScreen.components) {
+                        if (component instanceof SpinWheelComponent) {
+                            SpinWheelComponent wheel = ((SpinWheelComponent) component);
+                            if (!wheel.isRolling) {
+                                Logger.trace("Start spin wheel #" + wheel.index);
+                                wheel.roll();
+                            }
+                        }
+                    }
+
+                    new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
+                        @Override
+                        public void run() {
+                            try {
+                                homeScreen.isSpinOutlineAnimationRunning = true;
+                                isHovered = false;
+                                Thread.sleep(250);
+                                isHovered = true;
+                                homeScreen.isSpinOutlineAnimationRunning = false;
+
+                                homeScreen.interruptResultHighlighterAnimation = true;
+                                Thread.sleep(500);
+                                homeScreen.interruptResultHighlighterAnimation = false;
+
+                                Thread.currentThread().interrupt();
+                            } catch (Exception ex) {
+                                Logger.error(ex.getMessage());
+                            }
+                        }
+                    }.start();
                 }
             }
-
-            new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
-                @Override
-                public void run() {
-                    try {
-                        homeScreen.isSpinOutlineAnimationRunning = true;
-                        isHovered = false;
-                        Thread.sleep(250);
-                        isHovered = true;
-                        homeScreen.isSpinOutlineAnimationRunning = false;
-
-                        homeScreen.interruptResultHighlighterAnimation = true;
-                        Thread.sleep(500);
-                        homeScreen.interruptResultHighlighterAnimation = false;
-
-                        Thread.currentThread().interrupt();
-                    } catch (Exception ex) {
-                        Logger.error(ex.getMessage());
-                    }
-                }
-            }.start();
-
         }
     }
 }

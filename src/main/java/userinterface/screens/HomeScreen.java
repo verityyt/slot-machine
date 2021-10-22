@@ -28,6 +28,7 @@ public class HomeScreen extends Screen {
         SpinWheelComponent firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
         SpinWheelComponent secondWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
         SpinWheelComponent thirdWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
+
         try {
             GradientButtonComponent spinButton = new GradientButtonComponent(230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
