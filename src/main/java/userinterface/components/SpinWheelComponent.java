@@ -11,23 +11,22 @@ import java.util.Random;
 
 public class SpinWheelComponent extends Component {
 
+    public final int number;
     private final Color red = Color.decode("#E74C3C");
     private final Color blue = Color.decode("#3498DB");
     private final Color green = Color.decode("#2ECC71");
-
+    public boolean rolling = false;
     private Color firstColor = red;
     private Color secondColor = green;
     private Color thirdColor = blue;
     private Color fourthColor = blue;
-
     private int firstY;
     private int secondY;
     private int thirdY;
     private int fourthY;
-
-    private final int number;
     private int rollingSpeed = 1;
-    public boolean rolling = true;
+
+    private SpinWheelComponent component = this;
 
     public SpinWheelComponent(int number, int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -38,20 +37,6 @@ public class SpinWheelComponent extends Component {
         this.thirdY = y + 310;
         this.fourthY = y;
         this.number = number;
-
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(3000);
-
-                    startRolling();
-                } catch (Exception e) {
-
-                }
-            }
-        }.start();
-
     }
 
     @Override
@@ -80,6 +65,8 @@ public class SpinWheelComponent extends Component {
     }
 
     public void startRolling() {
+        rolling = true;
+
         new Thread() {
             @Override
             public void run() {
@@ -144,6 +131,10 @@ public class SpinWheelComponent extends Component {
                         } else {
                             if (firstY == y || secondY == y || thirdY == y || fourthY == y) {
                                 rolling = false;
+                                rollingSpeed = 1; // Resetting rolling speed
+                                if (WindowHandler.screen instanceof HomeScreen) {
+                                    ((HomeScreen) WindowHandler.screen).finishedWheels.add(component);
+                                }
                                 break;
                             } else {
                                 System.out.print(""); // Do nothing
