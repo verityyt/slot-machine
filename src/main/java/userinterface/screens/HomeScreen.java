@@ -79,9 +79,19 @@ public class HomeScreen extends Screen {
 
         if (drawResultHighlighter) {
             int rectWidth = (3 * 125) + (30 * 2) + 20;
+            if(currentlySpinning) {
+                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+                g2d.setComposite(composite);
+            }else {
+                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+                g2d.setComposite(composite);
+            }
             g2d.setPaint(new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF")));
             g2d.setStroke(new BasicStroke(3f));
             g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
+
+            AlphaComposite defaultComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+            g2d.setComposite(defaultComposite);
         }
 
         /* HEADER */
@@ -143,7 +153,9 @@ public class HomeScreen extends Screen {
     @Override
     public void mouseClicked(MouseEvent e) {
         if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
-            animateSpinImage();
+            if (!currentlySpinning) {
+                animateSpinImage();
+            }
 
             for (Component component : components) {
                 if (component instanceof SpinWheelComponent) {
