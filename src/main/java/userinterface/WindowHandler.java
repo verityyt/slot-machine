@@ -125,7 +125,6 @@ public class WindowHandler {
 
         if (!window.isVisible()) {
             Logger.error("Unable to open window");
-            System.exit(-1);
         }
 
         new Thread() {
@@ -137,7 +136,7 @@ public class WindowHandler {
                         window.repaint();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.error(e.getMessage());
                 }
             }
         }.start();

@@ -1,5 +1,6 @@
 package userinterface.components;
 
+import sun.rmi.runtime.Log;
 import userinterface.Component;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
@@ -11,117 +12,108 @@ import java.util.Random;
 
 public class SpinWheelComponent extends Component {
 
-    public final int number;
+    public final int index;
+
     private final Color red = Color.decode("#E74C3C");
     private final Color blue = Color.decode("#3498DB");
     private final Color green = Color.decode("#2ECC71");
-    public boolean rolling = false;
-    private Color firstColor = red;
-    private Color secondColor = green;
-    private Color thirdColor = blue;
-    private Color fourthColor = blue;
-    private int firstY;
-    private int secondY;
-    private int thirdY;
-    private int fourthY;
+    private final SpinWheelComponent component = this;
+    public boolean isRolling = false;
+    private Color firstCircleColor = red;
+    private Color secondCircleColor = green;
+    private Color thirdCircleColor = blue;
+    private Color fourthCircleColor = blue;
     private int rollingSpeed = 1;
-
-    private SpinWheelComponent component = this;
+    private int firstCircleY;
+    private int secondCircleY;
+    private int thirdCircleY;
+    private int fourthCircleY;
 
     public SpinWheelComponent(int number, int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.index = number;
+        this.firstCircleY = y;
+        this.secondCircleY = y + 155;
+        this.thirdCircleY = y + 310;
+        this.fourthCircleY = y;
         this.width = 125;
         this.height = 435;
-        this.firstY = y;
-        this.secondY = y + 155;
-        this.thirdY = y + 310;
-        this.fourthY = y;
-        this.number = number;
     }
 
     @Override
     public void draw(Graphics g, ImageObserver observer) {
 
-        GradientPaint fourthGradient = new GradientPaint(x + 62, y, Color.white, x + 62, y + width, fourthColor);
+        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y, Color.white, x + 62, y + width, fourthCircleColor));
+        g.fillOval(x, fourthCircleY - width - 30, width, width);
 
-        ((Graphics2D) g).setPaint(fourthGradient);
-        g.fillOval(x, fourthY - width - 30, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y + 310, thirdCircleColor, x + 62, y + 310 + width, Color.white));
+        g.fillOval(x, thirdCircleY, width, width);
 
-        GradientPaint thirdGradient = new GradientPaint(x + 62, y + 310, thirdColor, x + 62, y + 310 + width, Color.white);
+        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y + 155 + width, secondCircleColor, x + 62, y + 155 + width + width, Color.white));
+        g.fillOval(x, secondCircleY, width, width);
 
-        ((Graphics2D) g).setPaint(thirdGradient);
-        g.fillOval(x, thirdY, width, width);
-
-        GradientPaint secondGradient = new GradientPaint(x + 62, y + 155 + width, secondColor, x + 62, y + 155 + width + width, Color.white);
-
-        ((Graphics2D) g).setPaint(secondGradient);
-        g.fillOval(x, secondY, width, width);
-
-        GradientPaint firstGradient = new GradientPaint(x + 62, y, Color.white, x + 62, y + width, firstColor);
-
-        ((Graphics2D) g).setPaint(firstGradient);
-        g.fillOval(x, firstY, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y, Color.white, x + 62, y + width, firstCircleColor));
+        g.fillOval(x, firstCircleY, width, width);
 
     }
 
-    public void startRolling() {
-        rolling = true;
+    public void roll() {
+        isRolling = true;
 
-        new Thread() {
+        new Thread() { // Rolling animation (runs once per spin-start)
             @Override
             public void run() {
                 try {
                     while (true) {
-                        if (!rolling) {
+                        if (!isRolling) {
                             break;
                         }
 
                         Thread.sleep(rollingSpeed);
 
-                        firstY++;
-                        secondY++;
-                        thirdY++;
+                        firstCircleY++;
+                        secondCircleY++;
+                        thirdCircleY++;
+                        fourthCircleY++;
 
-                        fourthY++;
+                        if (firstCircleY == (y + 155)) {
 
-                        if (firstY == (y + 155)) {
+                            int tempFirstCircleY = firstCircleY;
+                            int tempSecondCircleY = secondCircleY;
+                            int tempFourthCircleY = fourthCircleY;
 
-                            int tempFirstY = firstY;
-                            int tempSecondY = secondY;
-                            int tempFourthY = fourthY;
+                            Color tempFirstCircleColor = firstCircleColor;
+                            Color tempSecondCircleColor = secondCircleColor;
+                            Color tempFourthCircleColor = fourthCircleColor;
 
-                            Color tempFirstColor = firstColor;
-                            Color tempSecondColor = secondColor;
-                            Color tempFourthColor = fourthColor;
+                            fourthCircleY = y;
+                            firstCircleY = tempFourthCircleY - width - 30;
+                            secondCircleY = tempFirstCircleY;
+                            thirdCircleY = tempSecondCircleY;
 
-                            fourthY = y;
-                            firstY = tempFourthY - width - 30;
-                            secondY = tempFirstY;
-                            thirdY = tempSecondY;
-
-                            firstColor = tempFourthColor;
-                            secondColor = tempFirstColor;
-                            thirdColor = tempSecondColor;
-                            fourthColor = tempSecondColor;
+                            firstCircleColor = tempFourthCircleColor;
+                            secondCircleColor = tempFirstCircleColor;
+                            thirdCircleColor = tempSecondCircleColor;
+                            fourthCircleColor = tempSecondCircleColor;
 
                         }
                     }
 
                 } catch (Exception e) {
-
+                    Logger.error(e.getMessage());
                 }
 
             }
         }.start();
 
-        new Thread() {
+        new Thread() { // Stopping + animation (runs once per spin-start)
             @Override
             public void run() {
                 try {
-                    int sleep = new Random().nextInt(10000 - 5000) + 5000;
+                    int timeTillStopping = new Random().nextInt(10000 - 5000) + 5000;
 
-                    Thread.sleep(sleep);
-                    Logger.debug("Stopping spin wheel #" + number + " after " + sleep + "ms");
+                    Thread.sleep(timeTillStopping);
+                    Logger.debug("Stopping spin wheel #" + index + " after " + timeTillStopping + "ms");
 
                     while (true) {
                         if (rollingSpeed < 5) {
@@ -129,20 +121,20 @@ public class SpinWheelComponent extends Component {
 
                             Thread.sleep(750);
                         } else {
-                            if (firstY == y || secondY == y || thirdY == y || fourthY == y) {
-                                rolling = false;
-                                rollingSpeed = 1; // Resetting rolling speed
+                            if (firstCircleY == y || secondCircleY == y || thirdCircleY == y || fourthCircleY == y) {
+                                isRolling = false;
+                                rollingSpeed = 1;
                                 if (WindowHandler.screen instanceof HomeScreen) {
                                     ((HomeScreen) WindowHandler.screen).finishedWheels.add(component);
                                 }
                                 break;
                             } else {
-                                System.out.print(""); // Do nothing
+                                System.out.print("");
                             }
                         }
                     }
                 } catch (Exception e) {
-
+                    Logger.error(e.getMessage());
                 }
             }
         }.start();

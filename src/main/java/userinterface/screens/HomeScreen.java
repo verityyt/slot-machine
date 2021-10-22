@@ -19,31 +19,31 @@ import java.util.ArrayList;
 public class HomeScreen extends Screen {
 
     public ArrayList<SpinWheelComponent> finishedWheels = new ArrayList<>();
-    private boolean drawShowResultRect = true;
-    private boolean hoverSpinButton = false;
-    private boolean spinOutlineAnimation = false;
-    private boolean resultRectAnimation = false;
-    private boolean interruptResultRectAnimation = false;
+    private boolean drawResultHighlighter = true;
+    private boolean isSpinButtonHovered = false;
+    private boolean isSpinOutlineAnimationRunning = false;
+    private boolean isResultHighlighterAnimationRunning = false;
+    private boolean interruptResultHighlighterAnimation = false;
     private boolean currentlySpinning = false;
 
     private int spinImageRotation = 0;
 
     public HomeScreen() {
-        SpinWheelComponent firstSpinWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
-        SpinWheelComponent secondSpinWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
-        SpinWheelComponent thirdSpinWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
+        SpinWheelComponent firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
+        SpinWheelComponent secondWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
+        SpinWheelComponent thirdWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
 
-        components.add(firstSpinWheel);
-        components.add(secondSpinWheel);
-        components.add(thirdSpinWheel);
+        components.add(firstWheel);
+        components.add(secondWheel);
+        components.add(thirdWheel);
 
-        new Thread() {
+        new Thread() { // Whether all wheels have finished => Start result highlighter animation (Runs infinitely)
             @Override
             public void run() {
                 while (true) {
-                    if (finishedWheels.contains(firstSpinWheel) && finishedWheels.contains(secondSpinWheel) && finishedWheels.contains(thirdSpinWheel)) {
-                        if (!resultRectAnimation) {
-                            animateResultRect();
+                    if (finishedWheels.contains(firstWheel) && finishedWheels.contains(secondWheel) && finishedWheels.contains(thirdWheel)) {
+                        if (!isResultHighlighterAnimationRunning) {
+                            animateResultHighlighter();
                             currentlySpinning = false;
                             finishedWheels.clear();
                         }
@@ -56,19 +56,20 @@ public class HomeScreen extends Screen {
 
     }
 
-    public static BufferedImage resize(BufferedImage img, int newW, int newH) {
-        Image tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH);
-        BufferedImage dimg = new BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB);
+    public static BufferedImage resize(BufferedImage img, int width, int height) {
+        Image temp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g2d = dimg.createGraphics();
-        g2d.drawImage(tmp, 0, 0, null);
+        Graphics2D g2d = image.createGraphics();
+        g2d.drawImage(temp, 0, 0, null);
         g2d.dispose();
 
-        return dimg;
+        return image;
     }
 
     @Override
     public void draw(Graphics g, ImageObserver observer) {
+        Graphics2D g2d = (Graphics2D) g;
 
         for (Component component : components) {
             component.draw(g, observer);
@@ -76,12 +77,10 @@ public class HomeScreen extends Screen {
 
         /* RESULT RECT */
 
-        if (drawShowResultRect) {
+        if (drawResultHighlighter) {
             int rectWidth = (3 * 125) + (30 * 2) + 20;
-            GradientPaint rectGradient = new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF"));
-
-            ((Graphics2D) g).setPaint(rectGradient);
-            ((Graphics2D) g).setStroke(new BasicStroke(3f));
+            g2d.setPaint(new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF")));
+            g2d.setStroke(new BasicStroke(3f));
             g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
         }
 
@@ -99,13 +98,12 @@ public class HomeScreen extends Screen {
 
         /* SPIN BUTTON */
 
-        GradientPaint spinGradient = new GradientPaint(230, 715, Color.decode("#4834D4"), 410, 715, Color.decode("#B500FF"));
-        ((Graphics2D) g).setPaint(spinGradient);
+        g2d.setPaint(new GradientPaint(230, 715, Color.decode("#4834D4"), 410, 715, Color.decode("#B500FF")));
         g.fillRoundRect(230, 665, 180, 50, 50, 50);
 
-        if (hoverSpinButton) {
+        if (isSpinButtonHovered) {
             g.setColor(Color.black);
-            ((Graphics2D) g).setStroke(new BasicStroke(2f));
+            g2d.setStroke(new BasicStroke(2f));
             g.drawRoundRect(230, 665, 180, 50, 50, 50);
         }
 
@@ -114,9 +112,9 @@ public class HomeScreen extends Screen {
 
             AffineTransform transform = new AffineTransform();
             transform.translate(370, 677);
-            transform.rotate(Math.toRadians(spinImageRotation), 25 / 2, 25 / 2);
+            transform.rotate(Math.toRadians(spinImageRotation), 12, 12);
 
-            ((Graphics2D) g).drawImage(image, transform, observer);
+            g2d.drawImage(image, transform, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
         }
@@ -131,13 +129,13 @@ public class HomeScreen extends Screen {
     public void mouseMoved(MouseEvent e) {
         if (e.getX() > 235 && e.getX() < 425 && e.getY() > 690 && e.getY() < 740) {
             WindowHandler.window.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            if (!spinOutlineAnimation) {
-                hoverSpinButton = true;
+            if (!isSpinOutlineAnimationRunning) {
+                isSpinButtonHovered = true;
             }
         } else {
             WindowHandler.window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            if (!spinOutlineAnimation) {
-                hoverSpinButton = false;
+            if (!isSpinOutlineAnimationRunning) {
+                isSpinButtonHovered = false;
             }
         }
     }
@@ -150,28 +148,30 @@ public class HomeScreen extends Screen {
             for (Component component : components) {
                 if (component instanceof SpinWheelComponent) {
                     SpinWheelComponent wheel = ((SpinWheelComponent) component);
-                    if (!wheel.rolling) {
-                        Logger.trace("Start spin wheel #" + wheel.number);
-                        wheel.startRolling();
+                    if (!wheel.isRolling) {
+                        Logger.trace("Start spin wheel #" + wheel.index);
+                        wheel.roll();
                     }
                 }
             }
 
-            new Thread() {
+            new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
                 @Override
                 public void run() {
                     try {
-                        spinOutlineAnimation = true;
-                        hoverSpinButton = false;
+                        isSpinOutlineAnimationRunning = true;
+                        isSpinButtonHovered = false;
                         Thread.sleep(250);
-                        hoverSpinButton = true;
-                        spinOutlineAnimation = false;
+                        isSpinButtonHovered = true;
+                        isSpinOutlineAnimationRunning = false;
 
-                        interruptResultRectAnimation = true;
+                        interruptResultHighlighterAnimation = true;
                         Thread.sleep(500);
-                        interruptResultRectAnimation = false;
-                    } catch (Exception ex) {
+                        interruptResultHighlighterAnimation = false;
 
+                        Thread.currentThread().interrupt();
+                    } catch (Exception ex) {
+                        Logger.error(ex.getMessage());
                     }
                 }
             }.start();
@@ -182,7 +182,7 @@ public class HomeScreen extends Screen {
     private void animateSpinImage() {
         currentlySpinning = true;
 
-        new Thread() {
+        new Thread() { // Spin image rotation animation (Runs once per spin-start)
             @Override
             public void run() {
                 while (true) {
@@ -191,7 +191,7 @@ public class HomeScreen extends Screen {
                             Thread.sleep(2);
                             spinImageRotation++;
                         } catch (Exception e) {
-
+                            Logger.error(e.getMessage());
                         }
                     } else {
                         spinImageRotation = 0;
@@ -202,29 +202,30 @@ public class HomeScreen extends Screen {
         }.start();
     }
 
-    private void animateResultRect() {
-        resultRectAnimation = true;
+    private void animateResultHighlighter() {
+        isResultHighlighterAnimationRunning = true;
 
-        new Thread() {
+        new Thread() { // Result highlighter animation (Runs once per spin-end, maybe interrupted by new spin-start)
             @Override
             public void run() {
                 try {
                     int count = 0;
 
                     while (count < 10) {
-                        if(interruptResultRectAnimation) {
-                            drawShowResultRect = true;
+                        if (interruptResultHighlighterAnimation) {
+                            drawResultHighlighter = true;
                             break;
                         }
 
                         Thread.sleep(250);
-                        drawShowResultRect = !drawShowResultRect;
+                        drawResultHighlighter = !drawResultHighlighter;
                         count++;
                     }
 
-                    resultRectAnimation = false;
+                    isResultHighlighterAnimationRunning = false;
+                    Thread.currentThread().interrupt();
                 } catch (Exception e) {
-
+                    Logger.error(e.getMessage());
                 }
             }
         }.start();
