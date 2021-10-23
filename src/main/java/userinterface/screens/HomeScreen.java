@@ -327,11 +327,11 @@ public class HomeScreen extends Screen {
                                     resultHighlighterOpacity = 0.9;
                                 }
                             } else {
-                                if (resultHighlighterOpacity > 0.1) {
+                                if (resultHighlighterOpacity > 0.5) {
                                     resultHighlighterOpacity -= 0.1;
                                 } else {
                                     forward = true;
-                                    resultHighlighterOpacity = 0.2;
+                                    resultHighlighterOpacity = 0.6;
                                 }
                             }
                         } else {
