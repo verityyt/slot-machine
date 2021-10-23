@@ -273,12 +273,10 @@ public class HomeScreen extends Screen {
             updateBalance(0.9);
             resetStreak();
         } else if (!thrice) {
-            Logger.info("Spin Result: ONE TWICE (+10%)");
-            updateBalance(1.1);
-            increaseStreak();
+            Logger.info("Spin Result: ONE TWICE (+0%)");
         } else {
-            Logger.info("Spin Result: ONE THRICE (+20%)");
-            updateBalance(1.2);
+            Logger.info("Spin Result: ONE THRICE (+10%)");
+            updateBalance(1.1);
             increaseStreak();
         }
 
