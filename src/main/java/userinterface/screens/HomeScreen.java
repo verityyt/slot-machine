@@ -310,7 +310,7 @@ public class HomeScreen extends Screen {
 
                     while (true) {
                         if (count < 5) {
-                            Thread.sleep(25);
+                            Thread.sleep(50);
 
                             if (forward) {
                                 if (interruptResultHighlighterAnimation && resultHighlighterOpacity == 0.5) {
