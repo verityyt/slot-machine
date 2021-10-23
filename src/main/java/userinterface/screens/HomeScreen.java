@@ -127,6 +127,17 @@ public class HomeScreen extends Screen {
         g.setFont(CustomFont.medium.deriveFont(40f));
         g.drawString("SLOT MACHINE", 205, 100);
 
+        /* FOOTER */
+
+        g.setColor(Color.decode("#999999"));
+        g.setFont(CustomFont.regular.deriveFont(12f));
+
+        String text = "ENTER OR SPACE TO START SPIN";
+        int stringWidth = g.getFontMetrics().stringWidth(text);
+
+        g.drawString(text, (640 / 2) - (stringWidth / 2), 810);
+
+
         /* COMPONENTS */
 
         for (Component component : components) {
