@@ -4,6 +4,7 @@ import userinterface.Component;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
 import utils.CustomFont;
+import utils.ImageUtils;
 import utils.Logger;
 
 import java.awt.*;
@@ -27,7 +28,7 @@ public class GradientButtonComponent extends Component {
 
     public GradientButtonComponent(int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
         super(x, y, width, height);
-        this.image = resize(image, 25, 25);
+        this.image = ImageUtils.resize(image, 25, 25);
         this.fontSize = fontSize;
         GradientButtonComponent.text = text;
         this.gradientStart = gradientStart;
@@ -35,16 +36,7 @@ public class GradientButtonComponent extends Component {
         this.arc = arc;
     }
 
-    private static BufferedImage resize(BufferedImage img, int width, int height) {
-        Image temp = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g2d = image.createGraphics();
-        g2d.drawImage(temp, 0, 0, null);
-        g2d.dispose();
-
-        return image;
-    }
 
     public void rotateImage() {
         if (!isRotating) {

@@ -6,6 +6,7 @@ import userinterface.WindowHandler;
 import userinterface.components.GradientBadgeComponent;
 import userinterface.components.GradientButtonComponent;
 import userinterface.components.SpinWheelComponent;
+import utils.ColorUtils;
 import utils.CustomFont;
 import utils.Logger;
 
@@ -225,9 +226,9 @@ public class HomeScreen extends Screen {
         Graphics g = image.createGraphics();
         content.print(g);
 
-        String firstWheelHex = getHexFromRGB(image.getRGB((firstWheel.x + (firstWheel.width) / 2), (firstWheel.y + (firstWheel.height / 2))));
-        String secondWheelHex = getHexFromRGB(image.getRGB((secondWheel.x + (secondWheel.width) / 2), (secondWheel.y + (secondWheel.height / 2))));
-        String thirdWheelHex = getHexFromRGB(image.getRGB((thirdWheel.x + (thirdWheel.width) / 2), (thirdWheel.y + (thirdWheel.height / 2))));
+        String firstWheelHex = ColorUtils.getHexFromRGB(image.getRGB((firstWheel.x + (firstWheel.width) / 2), (firstWheel.y + (firstWheel.height / 2))));
+        String secondWheelHex = ColorUtils.getHexFromRGB(image.getRGB((secondWheel.x + (secondWheel.width) / 2), (secondWheel.y + (secondWheel.height / 2))));
+        String thirdWheelHex = ColorUtils.getHexFromRGB(image.getRGB((thirdWheel.x + (thirdWheel.width) / 2), (thirdWheel.y + (thirdWheel.height / 2))));
 
         HashMap<String, Integer> frequency = new HashMap<>();
 
@@ -281,13 +282,6 @@ public class HomeScreen extends Screen {
             increaseStreak();
         }
 
-    }
-
-    private String getHexFromRGB(int rgb) {
-        int firstWheelR = (rgb & 0x00ff0000) >> 16;
-        int firstWheelG = (rgb & 0x0000ff00) >> 8;
-        int firstWheelB = rgb & 0x000000ff;
-        return String.format("#%02x%02x%02x", firstWheelR, firstWheelG, firstWheelB);
     }
 
     private void animateResultHighlighter() {

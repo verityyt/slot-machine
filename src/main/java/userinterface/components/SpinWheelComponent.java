@@ -4,6 +4,7 @@ import sun.rmi.runtime.Log;
 import userinterface.Component;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
+import utils.ColorUtils;
 import utils.Logger;
 
 import java.awt.*;
@@ -14,15 +15,13 @@ public class SpinWheelComponent extends Component {
 
     public final int index;
 
-    private final Color red = Color.decode("#E74C3C");
-    private final Color blue = Color.decode("#3498DB");
-    private final Color green = Color.decode("#2ECC71");
+
     private final SpinWheelComponent component = this;
     public boolean isRolling = false;
-    private Color firstCircleColor = red;
-    private Color secondCircleColor = green;
-    private Color thirdCircleColor = blue;
-    private Color fourthCircleColor = blue;
+    private Color firstCircleColor = ColorUtils.red;
+    private Color secondCircleColor = ColorUtils.green;
+    private Color thirdCircleColor = ColorUtils.blue;
+    private Color fourthCircleColor = ColorUtils.blue;
     private int rollingSpeed = 1;
     private int firstCircleY;
     private int secondCircleY;
