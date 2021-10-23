@@ -16,7 +16,7 @@ public class StartScreen extends Screen {
     GradientButtonComponent button;
 
     public StartScreen() {
-        button = new GradientButtonComponent(this, 230, 700, 180, 50, "PLAY", 24, null, Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
+        button = new GradientButtonComponent(this, 230, 500, 180, 50, "PLAY", 24, null, Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
         components.add(button);
     }
 
@@ -28,14 +28,14 @@ public class StartScreen extends Screen {
         }
 
         try {
-            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), x + 245, y + 120, 150, 150, observer);
+            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), x + 235, y + 200, 150, 150, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read logo image (" + e.getMessage() + ")");
         }
 
         g.setColor(Color.black);
         g.setFont(CustomFont.medium.deriveFont(48f));
-        g.drawString("SLOT MACHINE", x + 140, y + 320);
+        g.drawString("SLOT MACHINE", x + 140, y + 390);
 
     }
 
