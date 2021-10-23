@@ -136,6 +136,8 @@ public class GradientButtonComponent extends Component {
         if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
             switch (text) {
                 case "SPIN": {
+                    Logger.info("Starting new spin...");
+
                     if (!homeScreen.currentlySpinning) {
                         homeScreen.animateSpinImage();
                     }
@@ -144,7 +146,7 @@ public class GradientButtonComponent extends Component {
                         if (component instanceof SpinWheelComponent) {
                             SpinWheelComponent wheel = ((SpinWheelComponent) component);
                             if (!wheel.isRolling) {
-                                Logger.trace("Start spin wheel #" + wheel.index);
+                                Logger.trace("Starting spin wheel #" + wheel.index + "...");
                                 wheel.roll();
                             }
                         }

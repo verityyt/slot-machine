@@ -2,6 +2,7 @@ package userinterface.screens;
 
 import userinterface.Component;
 import userinterface.Screen;
+import userinterface.WindowHandler;
 import userinterface.components.GradientBadgeComponent;
 import userinterface.components.GradientButtonComponent;
 import userinterface.components.SpinWheelComponent;
@@ -11,13 +12,19 @@ import utils.Logger;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeScreen extends Screen {
 
+    private final SpinWheelComponent firstWheel;
+    private final SpinWheelComponent secondWheel;
+    private final SpinWheelComponent thirdWheel;
     public ArrayList<SpinWheelComponent> finishedWheels = new ArrayList<>();
     public boolean isSpinOutlineAnimationRunning = false;
     public boolean interruptResultHighlighterAnimation = false;
@@ -28,16 +35,16 @@ public class HomeScreen extends Screen {
     private GradientBadgeComponent streakBadge;
 
     public HomeScreen() {
-        SpinWheelComponent firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
-        SpinWheelComponent secondWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
-        SpinWheelComponent thirdWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
+        firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
+        secondWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
+        thirdWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
 
         try {
             GradientButtonComponent spinButton = new GradientButtonComponent(230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
-            balanceBadge = new GradientBadgeComponent(85, 730, 135, 40, "YOUR BALANCE:", "0.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
+            balanceBadge = new GradientBadgeComponent(85, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
             components.add(balanceBadge);
-            streakBadge = new GradientBadgeComponent(430, 730, 135, 40, "CURRENT STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
+            streakBadge = new GradientBadgeComponent(430, 730, 135, 40, "WIN STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
             components.add(streakBadge);
         } catch (IOException e) {
             Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
@@ -63,6 +70,19 @@ public class HomeScreen extends Screen {
             }
         }.start();
 
+    }
+
+    public void updateBalance(double multiplier) {
+        double current = Double.parseDouble(balanceBadge.value);
+        balanceBadge.value = String.valueOf(new DecimalFormat("##.00").format(current * multiplier)).replace(",", ".");
+    }
+
+    public void increaseStreak() {
+        streakBadge.value = String.valueOf(Integer.parseInt(streakBadge.value) + 1);
+    }
+
+    public void resetStreak() {
+        streakBadge.value = "0";
     }
 
     @Override
@@ -143,6 +163,77 @@ public class HomeScreen extends Screen {
         }
     }
 
+    private void processResult() {
+        Container content = WindowHandler.window.getContentPane();
+        BufferedImage image = new BufferedImage(640, 860, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.createGraphics();
+        content.print(g);
+
+        String firstWheelHex = getHexFromRGB(image.getRGB((firstWheel.x + (firstWheel.width) / 2), (firstWheel.y + (firstWheel.height / 2))));
+        String secondWheelHex = getHexFromRGB(image.getRGB((secondWheel.x + (secondWheel.width) / 2), (secondWheel.y + (secondWheel.height / 2))));
+        String thirdWheelHex = getHexFromRGB(image.getRGB((thirdWheel.x + (thirdWheel.width) / 2), (thirdWheel.y + (thirdWheel.height / 2))));
+
+        HashMap<String, Integer> frequency = new HashMap<>();
+
+        frequency.put(firstWheelHex, 1);
+
+        if (frequency.containsKey(secondWheelHex)) {
+            frequency.put(secondWheelHex, frequency.get(secondWheelHex) + 1);
+        } else {
+            frequency.put(secondWheelHex, 1);
+        }
+
+        if (frequency.containsKey(thirdWheelHex)) {
+            frequency.put(thirdWheelHex, frequency.get(thirdWheelHex) + 1);
+        } else {
+            frequency.put(thirdWheelHex, 1);
+        }
+
+        boolean twice = false;
+        boolean thrice = false;
+
+        for (String key : frequency.keySet()) {
+            int value = frequency.get(key);
+
+            switch (value) {
+                case 1: {
+                    break;
+                }
+                case 2: {
+                    twice = true;
+                    break;
+                }
+                case 3: {
+                    thrice = true;
+                    break;
+                }
+            }
+
+        }
+
+        if (!twice && !thrice) {
+            Logger.info("Spin Result: ONLY ONCE (-10%)");
+            updateBalance(0.9);
+            resetStreak();
+        } else if (!thrice) {
+            Logger.info("Spin Result: ONE TWICE (+10%)");
+            updateBalance(1.1);
+            increaseStreak();
+        } else {
+            Logger.info("Spin Result: ONE THRICE (+20%)");
+            updateBalance(1.2);
+            increaseStreak();
+        }
+
+    }
+
+    private String getHexFromRGB(int rgb) {
+        int firstWheelR = (rgb & 0x00ff0000) >> 16;
+        int firstWheelG = (rgb & 0x0000ff00) >> 8;
+        int firstWheelB = rgb & 0x000000ff;
+        return String.format("#%02x%02x%02x", firstWheelR, firstWheelG, firstWheelB);
+    }
+
     private void animateResultHighlighter() {
         isResultHighlighterAnimationRunning = true;
 
@@ -150,6 +241,7 @@ public class HomeScreen extends Screen {
             @Override
             public void run() {
                 try {
+                    processResult();
                     int count = 0;
 
                     while (count < 10) {
