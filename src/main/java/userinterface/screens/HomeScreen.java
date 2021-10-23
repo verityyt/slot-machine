@@ -11,6 +11,7 @@ import utils.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
@@ -148,6 +149,50 @@ public class HomeScreen extends Screen {
         for (Component component : components) {
             component.mouseClicked(e);
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == 32 || e.getKeyCode() == 10) {
+            startSpin();
+        }
+    }
+
+    public void startSpin() {
+        Logger.info("Starting new spin...");
+
+        if (!currentlySpinning) {
+            animateSpinImage();
+        }
+
+        for (Component component : components) {
+            if (component instanceof SpinWheelComponent) {
+                SpinWheelComponent wheel = ((SpinWheelComponent) component);
+                if (!wheel.isRolling) {
+                    Logger.trace("Starting spin wheel #" + wheel.index + "...");
+                    wheel.roll();
+                }
+            }
+        }
+
+        new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
+            @Override
+            public void run() {
+                try {
+                    isSpinOutlineAnimationRunning = true;
+                    Thread.sleep(250);
+                    isSpinOutlineAnimationRunning = false;
+
+                    interruptResultHighlighterAnimation = true;
+                    Thread.sleep(500);
+                    interruptResultHighlighterAnimation = false;
+
+                    Thread.currentThread().interrupt();
+                } catch (Exception ex) {
+                    Logger.error(ex.getMessage());
+                }
+            }
+        }.start();
     }
 
     public void animateSpinImage() {

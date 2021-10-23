@@ -136,35 +136,15 @@ public class GradientButtonComponent extends Component {
         if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
             switch (text) {
                 case "SPIN": {
-                    Logger.info("Starting new spin...");
-
-                    if (!homeScreen.currentlySpinning) {
-                        homeScreen.animateSpinImage();
-                    }
-
-                    for (Component component : homeScreen.components) {
-                        if (component instanceof SpinWheelComponent) {
-                            SpinWheelComponent wheel = ((SpinWheelComponent) component);
-                            if (!wheel.isRolling) {
-                                Logger.trace("Starting spin wheel #" + wheel.index + "...");
-                                wheel.roll();
-                            }
-                        }
-                    }
-
-                    new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
+                    new Thread() { // Let button outline blink (Runs once per spin-start)
                         @Override
                         public void run() {
+                            homeScreen.startSpin();
+
                             try {
-                                homeScreen.isSpinOutlineAnimationRunning = true;
                                 isHovered = false;
                                 Thread.sleep(250);
                                 isHovered = true;
-                                homeScreen.isSpinOutlineAnimationRunning = false;
-
-                                homeScreen.interruptResultHighlighterAnimation = true;
-                                Thread.sleep(500);
-                                homeScreen.interruptResultHighlighterAnimation = false;
 
                                 Thread.currentThread().interrupt();
                             } catch (Exception ex) {
