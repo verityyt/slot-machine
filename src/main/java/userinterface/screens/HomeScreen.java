@@ -210,9 +210,9 @@ public class HomeScreen extends Screen {
                     Thread.sleep(250);
                     isSpinOutlineAnimationRunning = false;
 
-                    interruptResultHighlighterAnimation = true;
-                    Thread.sleep(500);
-                    interruptResultHighlighterAnimation = false;
+                    if (isResultHighlighterAnimationRunning) {
+                        interruptResultHighlighterAnimation = true;
+                    }
 
                     Thread.currentThread().interrupt();
                 } catch (Exception ex) {
@@ -312,13 +312,14 @@ public class HomeScreen extends Screen {
                         if (count < 5) {
                             Thread.sleep(50);
 
-                            if (forward) {
-                                if (interruptResultHighlighterAnimation && resultHighlighterOpacity == 0.5) {
-                                    isResultHighlighterAnimationRunning = false;
-                                    Thread.currentThread().interrupt();
-                                    break;
-                                }
+                            if (interruptResultHighlighterAnimation && String.valueOf(resultHighlighterOpacity).startsWith("0.5")) {
+                                isResultHighlighterAnimationRunning = false;
+                                interruptResultHighlighterAnimation = false;
+                                Thread.currentThread().interrupt();
+                                break;
+                            }
 
+                            if (forward) {
                                 if (resultHighlighterOpacity < 0.9) {
                                     resultHighlighterOpacity += 0.1;
                                 } else {
