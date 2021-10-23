@@ -111,7 +111,6 @@ public class GradientButtonComponent extends Component {
     @Override
     public void mouseMoved(MouseEvent e) {
         if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
-            WindowHandler.window.setCursor(new Cursor(Cursor.HAND_CURSOR));
             switch (text) {
                 case "SPIN": {
                     if (!homeScreen.isSpinOutlineAnimationRunning) {
@@ -120,7 +119,6 @@ public class GradientButtonComponent extends Component {
                 }
             }
         } else {
-            WindowHandler.window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             switch (text) {
                 case "SPIN": {
                     if (!homeScreen.isSpinOutlineAnimationRunning) {

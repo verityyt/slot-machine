@@ -78,7 +78,6 @@ public class GradientBadgeComponent extends Component {
     @Override
     public void mouseMoved(MouseEvent e) {
         if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
-            WindowHandler.window.setCursor(new Cursor(Cursor.HAND_CURSOR));
             switch (key) {
                 case "SPIN": {
                     if (!homeScreen.isSpinOutlineAnimationRunning) {
@@ -87,7 +86,6 @@ public class GradientBadgeComponent extends Component {
                 }
             }
         } else {
-            WindowHandler.window.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             switch (key) {
                 case "SPIN": {
                     if (!homeScreen.isSpinOutlineAnimationRunning) {
