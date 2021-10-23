@@ -31,7 +31,7 @@ public class HomeScreen extends Screen {
     public boolean isSpinOutlineAnimationRunning = false;
     public boolean interruptResultHighlighterAnimation = false;
     public boolean currentlySpinning = false;
-    private boolean drawResultHighlighter = true;
+    private double resultHighlighterOpacity = 1.0;
     private boolean isResultHighlighterAnimationRunning = false;
     private GradientBadgeComponent balanceBadge;
     private GradientBadgeComponent streakBadge;
@@ -99,22 +99,17 @@ public class HomeScreen extends Screen {
 
         /* RESULT RECT */
 
-        if (drawResultHighlighter) {
-            int rectWidth = (3 * 125) + (30 * 2) + 20;
-            if (currentlySpinning) {
-                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-                g2d.setComposite(composite);
-            } else {
-                AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
-                g2d.setComposite(composite);
-            }
-            g2d.setPaint(new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF")));
-            g2d.setStroke(new BasicStroke(3f));
-            g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
+        int rectWidth = (3 * 125) + (30 * 2) + 20;
 
-            AlphaComposite defaultComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
-            g2d.setComposite(defaultComposite);
-        }
+        AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) resultHighlighterOpacity);
+        g2d.setComposite(composite);
+
+        g2d.setPaint(new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF")));
+        g2d.setStroke(new BasicStroke(3f));
+        g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
+
+        AlphaComposite defaultComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+        g2d.setComposite(defaultComposite);
 
         /* HEADER */
 
@@ -175,6 +170,26 @@ public class HomeScreen extends Screen {
 
         if (!currentlySpinning) {
             animateSpinImage();
+
+            new Thread() {
+                @Override
+                public void run() {
+                    while (true) {
+                        try {
+                            Thread.sleep(25);
+
+                            if (resultHighlighterOpacity > 0.5) {
+                                resultHighlighterOpacity -= 0.1;
+                            } else {
+                                break;
+                            }
+                        } catch (Exception e) {
+                            Logger.error(e.getMessage());
+                        }
+                    }
+                }
+            }.start();
+
         }
 
         for (Component component : components) {
@@ -291,20 +306,41 @@ public class HomeScreen extends Screen {
                 try {
                     processResult();
                     int count = 0;
+                    boolean forward = true;
 
-                    while (count < 10) {
-                        if (interruptResultHighlighterAnimation) {
-                            drawResultHighlighter = true;
+                    while (true) {
+                        if (count < 5) {
+                            Thread.sleep(25);
+
+                            if (forward) {
+                                if (interruptResultHighlighterAnimation && resultHighlighterOpacity == 0.5) {
+                                    isResultHighlighterAnimationRunning = false;
+                                    Thread.currentThread().interrupt();
+                                    break;
+                                }
+
+                                if (resultHighlighterOpacity < 0.9) {
+                                    resultHighlighterOpacity += 0.1;
+                                } else {
+                                    count++;
+                                    forward = false;
+                                    resultHighlighterOpacity = 0.9;
+                                }
+                            } else {
+                                if (resultHighlighterOpacity > 0.1) {
+                                    resultHighlighterOpacity -= 0.1;
+                                } else {
+                                    forward = true;
+                                    resultHighlighterOpacity = 0.2;
+                                }
+                            }
+                        } else {
+                            isResultHighlighterAnimationRunning = false;
+                            Thread.currentThread().interrupt();
                             break;
                         }
 
-                        Thread.sleep(250);
-                        drawResultHighlighter = !drawResultHighlighter;
-                        count++;
                     }
-
-                    isResultHighlighterAnimationRunning = false;
-                    Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     Logger.error(e.getMessage());
                 }
