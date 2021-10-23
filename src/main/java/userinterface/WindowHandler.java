@@ -1,6 +1,6 @@
 package userinterface;
 
-import userinterface.screens.HomeScreen;
+import userinterface.screens.StartScreen;
 import utils.CustomFont;
 import utils.Logger;
 import core.SlotMachine;
@@ -15,7 +15,8 @@ public class WindowHandler {
 
     public static JFrame window;
 
-    public static Screen screen = new HomeScreen();
+    public static Screen screen = new StartScreen();
+    public static Screen nextScreen;
 
     public static void open() {
         Logger.trace("Opening window...");
@@ -36,7 +37,12 @@ public class WindowHandler {
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                 ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-                screen.draw(g, this);
+                if (screen != null) {
+                    screen.draw(g, this);
+                }
+                if (nextScreen != null) {
+                    nextScreen.draw(g, this);
+                }
             }
 
         };
@@ -136,11 +142,38 @@ public class WindowHandler {
                         window.repaint();
                     }
                 } catch (Exception e) {
-                    Logger.error(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }.start();
 
+    }
+
+    public static void switchScreen(Screen newScreen) {
+        newScreen.x = -640;
+        nextScreen = newScreen;
+
+        new Thread() {
+            @Override
+            public void run() {
+
+                while (true) {
+                    try {
+                        Thread.sleep(1);
+                        if (nextScreen.x < 0) {
+                            screen.x += 2;
+                            nextScreen.x += 2;
+                        } else {
+                            screen = nextScreen;
+                            nextScreen = null;
+                            break;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
     }
 
 }

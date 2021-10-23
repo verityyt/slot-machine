@@ -12,9 +12,9 @@ public class Component {
     public int width;
     public int height;
 
-    public Component(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
+    public Component(Screen parent, int relativeX, int relativeY, int width, int height) {
+        this.x = relativeX;
+        this.y = relativeY;
         this.width = width;
         this.height = height;
     }

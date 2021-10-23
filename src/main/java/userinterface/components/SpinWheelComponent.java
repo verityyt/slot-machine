@@ -1,7 +1,7 @@
 package userinterface.components;
 
-import sun.rmi.runtime.Log;
 import userinterface.Component;
+import userinterface.Screen;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
 import utils.ColorUtils;
@@ -17,6 +17,7 @@ public class SpinWheelComponent extends Component {
 
 
     private final SpinWheelComponent component = this;
+    private final Screen parent;
     public boolean isRolling = false;
     private Color firstCircleColor = ColorUtils.red;
     private Color secondCircleColor = ColorUtils.green;
@@ -28,8 +29,8 @@ public class SpinWheelComponent extends Component {
     private int thirdCircleY;
     private int fourthCircleY;
 
-    public SpinWheelComponent(int number, int x, int y, int width, int height) {
-        super(x, y, width, height);
+    public SpinWheelComponent(Screen parent, int number, int x, int y, int width, int height) {
+        super(parent, x, y, width, height);
         this.index = number;
         this.firstCircleY = y;
         this.secondCircleY = y + 155;
@@ -37,22 +38,23 @@ public class SpinWheelComponent extends Component {
         this.fourthCircleY = y;
         this.width = 125;
         this.height = 435;
+        this.parent = parent;
     }
 
     @Override
     public void draw(Graphics g, ImageObserver observer) {
 
-        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y, Color.white, x + 62, y + width, fourthCircleColor));
-        g.fillOval(x, fourthCircleY - width - 30, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(parent.x + x + 62, parent.y + y, Color.white, parent.x + x + 62, parent.y + y + width, fourthCircleColor));
+        g.fillOval(parent.x + x, parent.y + fourthCircleY - width - 30, width, width);
 
-        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y + 310, thirdCircleColor, x + 62, y + 310 + width, Color.white));
-        g.fillOval(x, thirdCircleY, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(parent.x + x + 62, parent.y + y + 310, thirdCircleColor, parent.x + x + 62, parent.y + y + 310 + width, Color.white));
+        g.fillOval(parent.x + x, parent.y + thirdCircleY, width, width);
 
-        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y + 155 + width, secondCircleColor, x + 62, y + 155 + width + width, Color.white));
-        g.fillOval(x, secondCircleY, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(parent.x + x + 62, parent.y + y + 155 + width, secondCircleColor, parent.x + x + 62, parent.y + y + 155 + width + width, Color.white));
+        g.fillOval(parent.x + x, parent.y + secondCircleY, width, width);
 
-        ((Graphics2D) g).setPaint(new GradientPaint(x + 62, y, Color.white, x + 62, y + width, firstCircleColor));
-        g.fillOval(x, firstCircleY, width, width);
+        ((Graphics2D) g).setPaint(new GradientPaint(parent.x + x + 62, parent.y + y, Color.white, parent.x + x + 62, parent.y + y + width, firstCircleColor));
+        g.fillOval(parent.x + x, parent.y + firstCircleY, width, width);
 
     }
 
@@ -75,7 +77,7 @@ public class SpinWheelComponent extends Component {
                         thirdCircleY++;
                         fourthCircleY++;
 
-                        if (firstCircleY == (y + 155)) {
+                        if (firstCircleY == (parent.y + y + 155)) {
 
                             int tempFirstCircleY = firstCircleY;
                             int tempSecondCircleY = secondCircleY;
@@ -85,7 +87,7 @@ public class SpinWheelComponent extends Component {
                             Color tempSecondCircleColor = secondCircleColor;
                             Color tempFourthCircleColor = fourthCircleColor;
 
-                            fourthCircleY = y;
+                            fourthCircleY = parent.y + y;
                             firstCircleY = tempFourthCircleY - width - 30;
                             secondCircleY = tempFirstCircleY;
                             thirdCircleY = tempSecondCircleY;
@@ -99,7 +101,7 @@ public class SpinWheelComponent extends Component {
                     }
 
                 } catch (Exception e) {
-                    Logger.error(e.getMessage());
+                    e.printStackTrace();
                 }
 
             }
@@ -120,7 +122,7 @@ public class SpinWheelComponent extends Component {
 
                             Thread.sleep(750);
                         } else {
-                            if (firstCircleY == y || secondCircleY == y || thirdCircleY == y || fourthCircleY == y) {
+                            if (firstCircleY == parent.y + y || secondCircleY == parent.y + y || thirdCircleY == parent.y + y || fourthCircleY == parent.y + y) {
                                 isRolling = false;
                                 rollingSpeed = 1;
                                 if (WindowHandler.screen instanceof HomeScreen) {
@@ -133,7 +135,7 @@ public class SpinWheelComponent extends Component {
                         }
                     }
                 } catch (Exception e) {
-                    Logger.error(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }.start();

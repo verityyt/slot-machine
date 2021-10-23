@@ -1,8 +1,10 @@
 package userinterface.components;
 
 import userinterface.Component;
+import userinterface.Screen;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
+import userinterface.screens.StartScreen;
 import utils.CustomFont;
 import utils.ImageUtils;
 import utils.Logger;
@@ -21,21 +23,26 @@ public class GradientButtonComponent extends Component {
     private final Color gradientStart;
     private final Color gradientEnd;
     private final int fontSize;
+    private final Screen parent;
     public boolean isRotating = false;
     public double rotation = 0.0;
     private HomeScreen homeScreen = null;
     private boolean isHovered = false;
 
-    public GradientButtonComponent(int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
-        super(x, y, width, height);
-        this.image = ImageUtils.resize(image, 25, 25);
+    public GradientButtonComponent(Screen parent, int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
+        super(parent, x, y, width, height);
+        if (image != null) {
+            this.image = ImageUtils.resize(image, 25, 25);
+        } else {
+            this.image = null;
+        }
         this.fontSize = fontSize;
         GradientButtonComponent.text = text;
         this.gradientStart = gradientStart;
         this.gradientEnd = gradientEnd;
         this.arc = arc;
+        this.parent = parent;
     }
-
 
 
     public void rotateImage() {
@@ -50,7 +57,7 @@ public class GradientButtonComponent extends Component {
                             Thread.sleep(10);
                             rotation += 0.1;
                         } catch (Exception e) {
-                            Logger.error(e.getMessage());
+                            e.printStackTrace();
                         }
 
                         if (!homeScreen.currentlySpinning && (Math.toDegrees(rotation) % 360) < 10) {
@@ -68,54 +75,58 @@ public class GradientButtonComponent extends Component {
     public void draw(Graphics g, ImageObserver observer) {
         Graphics2D g2d = (Graphics2D) g;
 
-        if (homeScreen == null) {
+        if (WindowHandler.screen instanceof HomeScreen && homeScreen == null) {
             homeScreen = (HomeScreen) WindowHandler.screen;
         }
 
-        if (WindowHandler.screen instanceof HomeScreen) {
-            g2d.setPaint(new GradientPaint(x, y + (height / 2), gradientStart, x + width, y + (height / 2), gradientEnd));
-            g.fillRoundRect(x, y, width, height, arc, arc);
+        g2d.setPaint(new GradientPaint(parent.x + x, parent.y + y + (height / 2), gradientStart, x + width, y + (height / 2), gradientEnd));
+        g.fillRoundRect(parent.x + x, parent.y + y, width, height, arc, arc);
 
-            if (isHovered) {
-                g.setColor(Color.black);
-                g2d.setStroke(new BasicStroke(2f));
-                g.drawRoundRect(x, y, width, height, arc, arc);
-            }
+        if (isHovered) {
+            g.setColor(Color.black);
+            g2d.setStroke(new BasicStroke(2f));
+            g.drawRoundRect(parent.x + x, parent.y + y, width, height, arc, arc);
+        }
 
-
+        if (image != null) {
             AffineTransform transform = new AffineTransform();
-            transform.translate(x + 140, y + (image.getWidth() / 2));
+            transform.translate(parent.x + x + 140, parent.y + y + (image.getWidth() / 2));
             transform.rotate(rotation, (image.getWidth() / 2), (image.getHeight() / 2));
 
             g2d.drawImage(image, transform, observer);
-
-            g.setColor(Color.white);
-            g.setFont(CustomFont.light.deriveFont((float) fontSize));
-
-            int stringWidth = g.getFontMetrics().stringWidth(text);
-            int stringHeight = g.getFontMetrics().getHeight();
-
-            g.drawString(text, x + (width - stringWidth) / 2, y + (height - stringHeight) / 2 + g.getFontMetrics().getAscent());
-
         }
+
+        g.setColor(Color.white);
+        g.setFont(CustomFont.light.deriveFont((float) fontSize));
+
+        int stringWidth = g.getFontMetrics().stringWidth(text);
+        int stringHeight = g.getFontMetrics().getHeight();
+
+        g.drawString(text, parent.x + x + (width - stringWidth) / 2, parent.y + y + (height - stringHeight) / 2 + g.getFontMetrics().getAscent());
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
+        if (e.getX() > parent.x + x && e.getX() < parent.x + x + width && e.getY() > parent.y + y + 30 && e.getY() < parent.y + y + 30 + height) {
             switch (text) {
                 case "SPIN": {
-                    if (!homeScreen.isSpinOutlineAnimationRunning) {
+                    if (homeScreen != null && !homeScreen.isSpinOutlineAnimationRunning) {
                         isHovered = true;
                     }
+                }
+                case "PLAY": {
+                    isHovered = true;
                 }
             }
         } else {
             switch (text) {
                 case "SPIN": {
-                    if (!homeScreen.isSpinOutlineAnimationRunning) {
+                    if (homeScreen != null && !homeScreen.isSpinOutlineAnimationRunning) {
                         isHovered = false;
                     }
+                }
+                case "PLAY": {
+                    isHovered = false;
                 }
             }
         }
@@ -123,7 +134,7 @@ public class GradientButtonComponent extends Component {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getX() > x && e.getX() < x + width && e.getY() > y + 30 && e.getY() < y + 30 + height) {
+        if (e.getX() > parent.x + x && e.getX() < parent.x + x + width && e.getY() > parent.y + y + 30 && e.getY() < parent.y + y + 30 + height) {
             switch (text) {
                 case "SPIN": {
                     new Thread() { // Let button outline blink (Runs once per spin-start)
@@ -142,6 +153,11 @@ public class GradientButtonComponent extends Component {
                             }
                         }
                     }.start();
+                }
+                case "PLAY": {
+                    if (WindowHandler.screen instanceof StartScreen) {
+                        WindowHandler.switchScreen(new HomeScreen());
+                    }
                 }
             }
         }

@@ -37,16 +37,16 @@ public class HomeScreen extends Screen {
     private GradientBadgeComponent streakBadge;
 
     public HomeScreen() {
-        firstWheel = new SpinWheelComponent(1, 100, 180, 50, 50);
-        secondWheel = new SpinWheelComponent(2, 255, 180, 50, 50);
-        thirdWheel = new SpinWheelComponent(3, 410, 180, 50, 50);
+        firstWheel = new SpinWheelComponent(this, 1, 100, 180, 50, 50);
+        secondWheel = new SpinWheelComponent(this, 2, 255, 180, 50, 50);
+        thirdWheel = new SpinWheelComponent(this, 3, 410, 180, 50, 50);
 
         try {
-            GradientButtonComponent spinButton = new GradientButtonComponent(230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
+            GradientButtonComponent spinButton = new GradientButtonComponent(this, 230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
-            balanceBadge = new GradientBadgeComponent(85, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
+            balanceBadge = new GradientBadgeComponent(this, 85, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
             components.add(balanceBadge);
-            streakBadge = new GradientBadgeComponent(430, 730, 135, 40, "WIN STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
+            streakBadge = new GradientBadgeComponent(this, 430, 730, 135, 40, "WIN STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
             components.add(streakBadge);
         } catch (IOException e) {
             Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
@@ -104,9 +104,9 @@ public class HomeScreen extends Screen {
         AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) resultHighlighterOpacity);
         g2d.setComposite(composite);
 
-        g2d.setPaint(new GradientPaint(90, 325, Color.decode("#4834D4"), 90 + rectWidth, 470, Color.decode("#B500FF")));
+        g2d.setPaint(new GradientPaint(x + 90, y + 325, Color.decode("#4834D4"), x + 90 + rectWidth, y + 470, Color.decode("#B500FF")));
         g2d.setStroke(new BasicStroke(3f));
-        g.drawRoundRect(90, 325, rectWidth, 145, 10, 10);
+        g.drawRoundRect(x + 90, y + 325, rectWidth, 145, 10, 10);
 
         AlphaComposite defaultComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
         g2d.setComposite(defaultComposite);
@@ -114,14 +114,14 @@ public class HomeScreen extends Screen {
         /* HEADER */
 
         try {
-            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), 105, 40, 95, 95, observer);
+            g.drawImage(ImageIO.read(new File("assets/images/logo.png")), x + 105, y + 40, 95, 95, observer);
         } catch (Exception e) {
             Logger.warn("Unable to read logo image (" + e.getMessage() + ")");
         }
 
         g.setColor(Color.black);
         g.setFont(CustomFont.medium.deriveFont(40f));
-        g.drawString("SLOT MACHINE", 205, 100);
+        g.drawString("SLOT MACHINE", x + 205, y + 100);
 
         /* FOOTER */
 
@@ -131,7 +131,7 @@ public class HomeScreen extends Screen {
         String text = "ENTER OR SPACE TO START SPIN";
         int stringWidth = g.getFontMetrics().stringWidth(text);
 
-        g.drawString(text, (640 / 2) - (stringWidth / 2), 810);
+        g.drawString(text, x + (640 / 2) - (stringWidth / 2), y + 810);
 
 
         /* COMPONENTS */
@@ -184,7 +184,7 @@ public class HomeScreen extends Screen {
                                 break;
                             }
                         } catch (Exception e) {
-                            Logger.error(e.getMessage());
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -342,7 +342,7 @@ public class HomeScreen extends Screen {
 
                     }
                 } catch (Exception e) {
-                    Logger.error(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }.start();

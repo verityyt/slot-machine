@@ -10,9 +10,8 @@ public class Screen {
 
     public ArrayList<Component> components = new ArrayList<>();
 
-    public Screen() {
-
-    }
+    public int x = 0;
+    public int y = 0;
 
     public void draw(Graphics g, ImageObserver observer) {
 
