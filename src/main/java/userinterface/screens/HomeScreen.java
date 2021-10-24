@@ -44,7 +44,7 @@ public class HomeScreen extends Screen {
         try {
             GradientButtonComponent spinButton = new GradientButtonComponent(this, 230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
-            balanceBadge = new GradientBadgeComponent(this, 85, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
+            balanceBadge = new GradientBadgeComponent(this, 65, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
             components.add(balanceBadge);
             streakBadge = new GradientBadgeComponent(this, 430, 730, 135, 40, "WIN STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
             components.add(streakBadge);
