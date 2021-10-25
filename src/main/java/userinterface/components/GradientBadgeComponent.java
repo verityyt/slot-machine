@@ -4,7 +4,6 @@ import userinterface.Component;
 import userinterface.Screen;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
-import utils.ColorUtils;
 import utils.CustomFont;
 
 import java.awt.*;

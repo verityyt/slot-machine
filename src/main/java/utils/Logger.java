@@ -25,14 +25,14 @@ public class Logger {
     }
 
     public static void debug(String text) {
-        if(enableDebug) {
+        if (enableDebug) {
             String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
             System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_CYAN + "DEBUG" + ANSI_GREY + "] " + ANSI_RESET + text);
         }
     }
 
     public static void trace(String text) {
-        if(enableTrace) {
+        if (enableTrace) {
             String date = new SimpleDateFormat("HH:mm:ss").format(new Date());
             System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_PURPLE + "TRACE" + ANSI_GREY + "] " + ANSI_RESET + text);
         }

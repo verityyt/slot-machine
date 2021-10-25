@@ -9,7 +9,6 @@ import utils.Logger;
 
 import java.awt.*;
 import java.awt.image.ImageObserver;
-import java.util.Random;
 
 public class SpinWheelComponent extends Component {
 
@@ -28,7 +27,7 @@ public class SpinWheelComponent extends Component {
     private int secondCircleY;
     private int thirdCircleY;
     private int fourthCircleY;
-    private int timeTillStopping;
+    private final int timeTillStopping;
 
     public SpinWheelComponent(Screen parent, int number, int x, int y, int width, int height, int timeTillStopping) {
         super(parent, x, y, width, height);

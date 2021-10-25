@@ -1,11 +1,10 @@
 package userinterface;
 
-import sun.awt.windows.ThemeReader;
+import core.SlotMachine;
 import userinterface.components.GradientButtonComponent;
 import userinterface.screens.StartScreen;
 import utils.CustomFont;
 import utils.Logger;
-import core.SlotMachine;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
