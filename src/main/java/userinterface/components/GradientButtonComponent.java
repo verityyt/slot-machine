@@ -29,6 +29,7 @@ public class GradientButtonComponent extends Component {
     private HomeScreen homeScreen = null;
     private boolean isHovered = false;
 
+
     public GradientButtonComponent(Screen parent, int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
         super(parent, x, y, width, height);
         if (image != null) {
@@ -44,6 +45,9 @@ public class GradientButtonComponent extends Component {
         this.parent = parent;
     }
 
+    public void setText(String newText) {
+        text = newText;
+    }
 
     public void rotateImage() {
         if (!isRotating) {

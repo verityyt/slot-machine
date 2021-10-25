@@ -1,6 +1,7 @@
 package userinterface;
 
 import sun.awt.windows.ThemeReader;
+import userinterface.components.GradientButtonComponent;
 import userinterface.screens.StartScreen;
 import utils.CustomFont;
 import utils.Logger;
@@ -174,6 +175,8 @@ public class WindowHandler {
                                 startScreen.animationContentTopY = ((easeInOutCubic(contentTopOutAnimationProgress) / 860) * -1);
                                 startScreen.y = (easeInOutCubic(contentBottomOutAnimationProgress) / 860);
 
+                                ((GradientButtonComponent) (startScreen.components.get(0))).setText("PLAY");
+
                                 if (run > 100) {
                                     nextScreen.x = (easeInOutCubic(contentInAnimationProgress) / 640) - 640;
                                     contentInAnimationProgress += 0.1;
@@ -183,6 +186,7 @@ public class WindowHandler {
                                 contentBottomOutAnimationProgress += 0.1;
                                 run++;
                             } else {
+                                ((GradientButtonComponent) (startScreen.components.get(0))).setText("SPIN");
                                 screen = nextScreen;
                                 nextScreen = null;
                                 break;
