@@ -5,7 +5,7 @@ import utils.Logger;
 
 public class SlotMachine {
 
-    public static String version = "0.4";
+    public static String version = "0.5";
 
     public static void main(String[] args) {
 

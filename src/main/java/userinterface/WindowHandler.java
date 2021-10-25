@@ -172,13 +172,13 @@ public class WindowHandler {
                             Thread.sleep(1);
 
                             if (nextScreen.x < 0) {
-                                startScreen.animationContentTopY = ((easeInOutCubic(contentTopOutAnimationProgress) / 860) * -1);
-                                startScreen.y = (easeInOutCubic(contentBottomOutAnimationProgress) / 860);
+                                startScreen.animationContentTopY = ((Easings.easeInOutCubic(contentTopOutAnimationProgress) / 860) * -1);
+                                startScreen.y = (Easings.easeInOutCubic(contentBottomOutAnimationProgress) / 860);
 
                                 ((GradientButtonComponent) (startScreen.components.get(0))).setText("PLAY");
 
                                 if (run > 100) {
-                                    nextScreen.x = (easeInOutCubic(contentInAnimationProgress) / 640) - 640;
+                                    nextScreen.x = (Easings.easeInOutCubic(contentInAnimationProgress) / 640) - 640;
                                     contentInAnimationProgress += 0.1;
                                 }
 
@@ -204,9 +204,9 @@ public class WindowHandler {
                         try {
                             Thread.sleep(1);
                             if (nextScreen.x < 0) {
-                                screen.x = (easeInOutCubic(animationProgress) / 640);
-                                nextScreen.x = (easeInOutCubic(animationProgress) / 640) - 640;
-                                animationProgress+=0.1;
+                                screen.x = (Easings.easeInOutCubic(animationProgress) / 640);
+                                nextScreen.x = (Easings.easeInOutCubic(animationProgress) / 640) - 640;
+                                animationProgress += 0.1;
                             } else {
                                 screen = nextScreen;
                                 nextScreen = null;
@@ -219,10 +219,6 @@ public class WindowHandler {
                 }
             }
         }.start();
-    }
-
-    private static int easeInOutCubic(double x) {
-        return (int) Math.round(x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
     }
 
 }
