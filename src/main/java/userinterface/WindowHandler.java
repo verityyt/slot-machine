@@ -20,8 +20,7 @@ public class WindowHandler {
     public static Screen nextScreen;
 
     public static void open() {
-        Logger.trace("Opening window...");
-
+        Logger.logic("Preparing window assets...");
         CustomFont.registerAll();
 
         JComponent component = new JComponent() {
@@ -58,7 +57,7 @@ public class WindowHandler {
         window.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Logger.info("Exiting program...");
+                Logger.logic("Exiting program...");
                 System.exit(-1);
             }
         });
@@ -124,14 +123,14 @@ public class WindowHandler {
             window.setIconImage(
                     ImageIO.read(new File("assets/images/favicon.png")));
         } catch (Exception e) {
-            Logger.warn("Unable to read favicon image (" + e.getMessage() + ")");
+            Logger.warn("Unable to read favicon image! (" + e.getMessage() + ")");
         }
         window.setTitle("Slot Machine | v" + SlotMachine.version);
 
         window.setVisible(true);
 
         if (!window.isVisible()) {
-            Logger.error("Unable to open window");
+            Logger.error("Unable to open window!");
         }
 
         new Thread() {
@@ -151,6 +150,8 @@ public class WindowHandler {
     }
 
     public static void switchScreen(Screen newScreen) {
+        Logger.animation("Starting screen switch animation...");
+
         newScreen.x = -640;
         nextScreen = newScreen;
 
@@ -188,6 +189,7 @@ public class WindowHandler {
                                 ((GradientButtonComponent) (startScreen.components.get(0))).setText("SPIN");
                                 screen = nextScreen;
                                 nextScreen = null;
+                                Logger.animation("Finished screen switch animation!");
                                 break;
                             }
 
@@ -196,7 +198,6 @@ public class WindowHandler {
                         }
                     }
                 } else {
-
                     double animationProgress = 0.1;
 
                     while (true) {
@@ -209,6 +210,7 @@ public class WindowHandler {
                             } else {
                                 screen = nextScreen;
                                 nextScreen = null;
+                                Logger.animation("Finished screen switch animation!");
                                 break;
                             }
                         } catch (Exception e) {

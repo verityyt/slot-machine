@@ -37,29 +37,26 @@ public class HomeScreen extends Screen {
     private boolean isResultHighlighterAnimationRunning = false;
     private GradientBadgeComponent balanceBadge;
     private GradientBadgeComponent streakBadge;
+    private GradientButtonComponent spinButton;
 
     public HomeScreen() {
-        ArrayList<Integer> times = new ArrayList<>();
-        times.add(new Random().nextInt(10000 - 5000) + 5000);
-        times.add(new Random().nextInt(10000 - 5000) + 5000);
-        times.add(new Random().nextInt(10000 - 5000) + 5000);
+        firstWheel = new SpinWheelComponent(this, 1, 100, 180, 50, 50, 0);
+        secondWheel = new SpinWheelComponent(this, 2, 255, 180, 50, 50, 0);
+        thirdWheel = new SpinWheelComponent(this, 3, 410, 180, 50, 50, 0);
 
-        Collections.sort(times);
-
-        firstWheel = new SpinWheelComponent(this, 1, 100, 180, 50, 50, times.get(0));
-        secondWheel = new SpinWheelComponent(this, 2, 255, 180, 50, 50, times.get(1));
-        thirdWheel = new SpinWheelComponent(this, 3, 410, 180, 50, 50, times.get(2));
+        generateStopTimes();
 
         try {
-            GradientButtonComponent spinButton = new GradientButtonComponent(this, 230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
+            spinButton = new GradientButtonComponent(this, 230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);
             components.add(spinButton);
             balanceBadge = new GradientBadgeComponent(this, 80, 730, 135, 40, "YOUR BALANCE:", "10.00", 10, 16, ImageIO.read(new File("assets/images/home/dollar.png")), Color.decode("#EB4D4B"), Color.decode("#F0932B"), 40);
             components.add(balanceBadge);
             streakBadge = new GradientBadgeComponent(this, 430, 730, 135, 40, "WIN STREAK:", "0", 10, 16, ImageIO.read(new File("assets/images/home/streak.png")), Color.decode("#11B5C6"), Color.decode("#2ECC71"), 40);
             components.add(streakBadge);
         } catch (IOException e) {
-            Logger.warn("Unable to read spin image (" + e.getMessage() + ")");
+            Logger.warn("Unable to read image (" + e.getMessage() + ")");
         }
+
         components.add(firstWheel);
         components.add(secondWheel);
         components.add(thirdWheel);
@@ -70,6 +67,7 @@ public class HomeScreen extends Screen {
                 while (true) {
                     if (finishedWheels.contains(firstWheel) && finishedWheels.contains(secondWheel) && finishedWheels.contains(thirdWheel)) {
                         if (!isResultHighlighterAnimationRunning) {
+                            Logger.logic("Detected spin end!");
                             animateResultHighlighter();
                             currentlySpinning = false;
                             finishedWheels.clear();
@@ -81,6 +79,21 @@ public class HomeScreen extends Screen {
             }
         }.start();
 
+    }
+
+    public void generateStopTimes() {
+        ArrayList<Integer> times = new ArrayList<>();
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+
+        Collections.sort(times);
+
+        Logger.logic("Generated stop times for wheels! " + times);
+
+        firstWheel.timeTillStopping = times.get(0);
+        secondWheel.timeTillStopping = times.get(1);
+        thirdWheel.timeTillStopping = times.get(2);
     }
 
     public void updateBalance(double multiplier) {
@@ -224,7 +237,7 @@ public class HomeScreen extends Screen {
     }
 
     public void startSpin() {
-        Logger.info("Starting new spin...");
+        Logger.logic("Starting new spin...");
 
         if (!currentlySpinning) {
             animateSpinImage();
@@ -239,6 +252,7 @@ public class HomeScreen extends Screen {
                             if (resultHighlighterOpacity > 0.5) {
                                 resultHighlighterOpacity -= 0.1;
                             } else {
+                                Logger.animation("Finished lower-opacity animation of 'SPIN' button!");
                                 break;
                             }
                         } catch (Exception e) {
@@ -248,19 +262,21 @@ public class HomeScreen extends Screen {
                 }
             }.start();
 
+            Logger.animation("Started lower-opacity animation of 'SPIN' button!");
         }
 
         for (Component component : components) {
             if (component instanceof SpinWheelComponent) {
                 SpinWheelComponent wheel = ((SpinWheelComponent) component);
                 if (!wheel.isRolling) {
-                    Logger.trace("Starting spin wheel #" + wheel.index + "...");
                     wheel.roll();
+                    Logger.logic("Started spin of wheel #" + wheel.index + "!");
                 }
             }
         }
 
-        new Thread() { // Spin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
+
+        new Thread() { // Variables for + pin buttons outline animation + interrupting result highlighter animation (Runs once per spin-start)
             @Override
             public void run() {
                 try {
@@ -270,6 +286,7 @@ public class HomeScreen extends Screen {
 
                     if (isResultHighlighterAnimationRunning) {
                         interruptResultHighlighterAnimation = true;
+                        Logger.animation("Interrupted breathing-opacity of result highlighter!");
                     }
 
                     Thread.currentThread().interrupt();
@@ -278,22 +295,18 @@ public class HomeScreen extends Screen {
                 }
             }
         }.start();
+
+        Logger.logic("Started new spin!");
     }
 
     public void animateSpinImage() {
         currentlySpinning = true;
-
-        for (Component component : components) {
-            if (component instanceof GradientButtonComponent) {
-                GradientButtonComponent gradientButtonComponent = (GradientButtonComponent) component;
-                if (GradientButtonComponent.text.equals("SPIN")) {
-                    gradientButtonComponent.rotateImage();
-                }
-            }
-        }
+        spinButton.rotateImage();
     }
 
     private void processResult() {
+        Logger.logic("Processing spin result...");
+
         Container content = WindowHandler.window.getContentPane();
         BufferedImage image = new BufferedImage(640, 860, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.createGraphics();
@@ -342,13 +355,13 @@ public class HomeScreen extends Screen {
         }
 
         if (!twice && !thrice) {
-            Logger.info("Spin Result: ONLY ONCE (-10%)");
+            Logger.logic("Spin Result: ONLY ONCE (-10%)");
             updateBalance(0.9);
             resetStreak();
         } else if (!thrice) {
-            Logger.info("Spin Result: ONE TWICE (+0%)");
+            Logger.logic("Spin Result: ONE TWICE (+0%)");
         } else {
-            Logger.info("Spin Result: ONE THRICE (+10%)");
+            Logger.logic("Spin Result: ONE THRICE (+10%)");
             updateBalance(1.1);
             increaseStreak();
         }
@@ -356,6 +369,8 @@ public class HomeScreen extends Screen {
     }
 
     private void animateResultHighlighter() {
+        Logger.animation("Started breathing-opacity animation of result highlighter!");
+
         isResultHighlighterAnimationRunning = true;
 
         new Thread() { // Result highlighter animation (Runs once per spin-end, maybe interrupted by new spin-start)
@@ -373,6 +388,7 @@ public class HomeScreen extends Screen {
                             if (interruptResultHighlighterAnimation && String.valueOf(resultHighlighterOpacity).startsWith("0.5")) {
                                 isResultHighlighterAnimationRunning = false;
                                 interruptResultHighlighterAnimation = false;
+                                Logger.animation("Stopped breathing-opacity animation of result highlighter after it's progress came down to 0.5!");
                                 Thread.currentThread().interrupt();
                                 break;
                             }

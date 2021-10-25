@@ -11,7 +11,7 @@ public class SlotMachine {
 
         WindowHandler.open();
 
-        Logger.info("Program started");
+        Logger.logic("Program started!");
 
     }
 

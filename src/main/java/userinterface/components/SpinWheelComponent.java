@@ -13,10 +13,9 @@ import java.awt.image.ImageObserver;
 public class SpinWheelComponent extends Component {
 
     public final int index;
-
-
     private final SpinWheelComponent component = this;
     private final Screen parent;
+    public int timeTillStopping;
     public boolean isRolling = false;
     private Color firstCircleColor = ColorUtils.red;
     private Color secondCircleColor = ColorUtils.green;
@@ -27,7 +26,6 @@ public class SpinWheelComponent extends Component {
     private int secondCircleY;
     private int thirdCircleY;
     private int fourthCircleY;
-    private final int timeTillStopping;
 
     public SpinWheelComponent(Screen parent, int number, int x, int y, int width, int height, int timeTillStopping) {
         super(parent, x, y, width, height);
@@ -108,12 +106,13 @@ public class SpinWheelComponent extends Component {
             }
         }.start();
 
+        Logger.animation("Started spin animation of wheel #" + index + "!");
+
         new Thread() { // Stopping + animation (runs once per spin-start)
             @Override
             public void run() {
                 try {
                     Thread.sleep(timeTillStopping);
-                    Logger.debug("Stopping spin wheel #" + index + " after " + timeTillStopping + "ms");
 
                     while (true) {
                         if (rollingSpeed < 5) {
@@ -127,6 +126,7 @@ public class SpinWheelComponent extends Component {
                                 if (WindowHandler.screen instanceof HomeScreen) {
                                     ((HomeScreen) WindowHandler.screen).finishedWheels.add(component);
                                 }
+                                Logger.animation("Finished spin animation of wheel #" + index + " after " + timeTillStopping + "ms!");
                                 break;
                             } else {
                                 System.out.print("");

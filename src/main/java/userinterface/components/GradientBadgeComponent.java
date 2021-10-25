@@ -5,6 +5,7 @@ import userinterface.Screen;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
 import utils.CustomFont;
+import utils.Logger;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -13,8 +14,7 @@ import java.awt.image.ImageObserver;
 
 public class GradientBadgeComponent extends Component {
 
-
-    private final int arc;
+    private final int rectArc;
     private final BufferedImage image;
     private final Color gradientStart;
     private final Color gradientEnd;
@@ -27,7 +27,7 @@ public class GradientBadgeComponent extends Component {
     private boolean isHovered = false;
     private Color valueColor = Color.white;
 
-    public GradientBadgeComponent(Screen parent, int x, int y, int width, int height, String key, String defaultValue, int keyFontSize, int valueFontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
+    public GradientBadgeComponent(Screen parent, int x, int y, int width, int height, String key, String defaultValue, int keyFontSize, int valueFontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int rectArc) {
         super(parent, x, y, width, height);
         this.image = image;
         this.keyFontSize = keyFontSize;
@@ -36,13 +36,12 @@ public class GradientBadgeComponent extends Component {
         this.value = defaultValue;
         this.gradientStart = gradientStart;
         this.gradientEnd = gradientEnd;
-        this.arc = arc;
+        this.rectArc = rectArc;
         this.parent = parent;
     }
 
     public void setValue(String newValue, boolean highlightChange, Color highlightColor) {
         value = newValue;
-
 
         if (highlightChange) {
             new Thread() {
@@ -61,7 +60,7 @@ public class GradientBadgeComponent extends Component {
             valueColor = Color.white;
         }
 
-
+        Logger.ui("Set value of '" + key + "' badge to '" + value + "'!");
     }
 
     @Override
@@ -74,7 +73,7 @@ public class GradientBadgeComponent extends Component {
 
         if (WindowHandler.screen instanceof HomeScreen) {
             g2d.setPaint(new GradientPaint(parent.x + x, parent.y + y + (height / 2), gradientStart, parent.x + x + width, parent.y + y + (height / 2), gradientEnd));
-            g.fillRoundRect(parent.x + x, parent.y + y, width, height, arc, arc);
+            g.fillRoundRect(parent.x + x, parent.y + y, width, height, rectArc, rectArc);
 
             if (isHovered) {
                 // hovered

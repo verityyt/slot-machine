@@ -13,13 +13,13 @@ public class CustomFont {
     public static Font bold;
 
     public static void registerAll() {
-        Logger.trace("Registering all fonts...");
-
         registerRegular();
         registerItalic();
         registerLight();
         registerMedium();
         registerBold();
+
+        Logger.ui("Registered all fonts!");
     }
 
     private static void registerRegular() {

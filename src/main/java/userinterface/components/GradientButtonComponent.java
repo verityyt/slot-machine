@@ -29,11 +29,11 @@ public class GradientButtonComponent extends Component {
     private HomeScreen homeScreen = null;
     private boolean isHovered = false;
 
-
     public GradientButtonComponent(Screen parent, int x, int y, int width, int height, String text, int fontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
         super(parent, x, y, width, height);
         if (image != null) {
             this.image = ImageUtils.resize(image, 25, 25);
+            Logger.ui("Resized icon of '" + text + "' button!");
         } else {
             this.image = null;
         }
@@ -67,11 +67,15 @@ public class GradientButtonComponent extends Component {
                         if (!homeScreen.currentlySpinning && (Math.toDegrees(rotation) % 360) < 10) {
                             rotation = 0;
                             isRotating = false;
+                            Logger.animation("Stopped rotate animation of '" + text + "' button's icon!");
                             break;
                         }
                     }
                 }
             }.start();
+
+
+            Logger.animation("Started rotate animation of '" + text + "' button's icon!");
         }
     }
 
@@ -147,6 +151,7 @@ public class GradientButtonComponent extends Component {
                             homeScreen.startSpin();
 
                             try {
+                                Logger.animation("Blink '" + text + "' button's outline!");
                                 isHovered = false;
                                 Thread.sleep(250);
                                 isHovered = true;
