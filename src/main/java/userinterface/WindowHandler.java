@@ -193,12 +193,16 @@ public class WindowHandler {
                         }
                     }
                 } else {
+
+                    double animationProgress = 0.1;
+
                     while (true) {
                         try {
                             Thread.sleep(1);
                             if (nextScreen.x < 0) {
-                                screen.x += 2;
-                                nextScreen.x += 2;
+                                screen.x = (easeInOutCubic(animationProgress) / 640);
+                                nextScreen.x = (easeInOutCubic(animationProgress) / 640) - 640;
+                                animationProgress+=0.1;
                             } else {
                                 screen = nextScreen;
                                 nextScreen = null;
