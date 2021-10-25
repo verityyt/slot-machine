@@ -1,5 +1,6 @@
 package userinterface;
 
+import sun.awt.windows.ThemeReader;
 import userinterface.screens.StartScreen;
 import utils.CustomFont;
 import utils.Logger;
@@ -156,20 +157,42 @@ public class WindowHandler {
         new Thread() {
             @Override
             public void run() {
+                if (screen instanceof StartScreen) {
+                    StartScreen startScreen = (StartScreen) screen;
 
-                while (true) {
-                    try {
-                        Thread.sleep(1);
-                        if (nextScreen.x < 0) {
-                            screen.x += 2;
-                            nextScreen.x += 2;
-                        } else {
-                            screen = nextScreen;
-                            nextScreen = null;
-                            break;
+                    while (true) {
+                        try {
+                            Thread.sleep(1);
+
+                            if (nextScreen.x < 0) {
+                                startScreen.animationContentTopY -= 2;
+                                startScreen.y += 2;
+                                nextScreen.x += 2;
+                            } else {
+                                screen = nextScreen;
+                                nextScreen = null;
+                                break;
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    }
+                } else {
+                    while (true) {
+                        try {
+                            Thread.sleep(1);
+                            if (nextScreen.x < 0) {
+                                screen.x += 2;
+                                nextScreen.x += 2;
+                            } else {
+                                screen = nextScreen;
+                                nextScreen = null;
+                                break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
