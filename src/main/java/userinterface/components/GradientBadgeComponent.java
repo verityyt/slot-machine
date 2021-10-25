@@ -4,6 +4,7 @@ import userinterface.Component;
 import userinterface.Screen;
 import userinterface.WindowHandler;
 import userinterface.screens.HomeScreen;
+import utils.ColorUtils;
 import utils.CustomFont;
 
 import java.awt.*;
@@ -12,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 
 public class GradientBadgeComponent extends Component {
+
 
     private final int arc;
     private final BufferedImage image;
@@ -24,6 +26,7 @@ public class GradientBadgeComponent extends Component {
     public String value;
     private HomeScreen homeScreen = null;
     private boolean isHovered = false;
+    private Color valueColor = Color.white;
 
     public GradientBadgeComponent(Screen parent, int x, int y, int width, int height, String key, String defaultValue, int keyFontSize, int valueFontSize, BufferedImage image, Color gradientStart, Color gradientEnd, int arc) {
         super(parent, x, y, width, height);
@@ -36,6 +39,30 @@ public class GradientBadgeComponent extends Component {
         this.gradientEnd = gradientEnd;
         this.arc = arc;
         this.parent = parent;
+    }
+
+    public void setValue(String newValue, boolean highlightChange, Color highlightColor) {
+        value = newValue;
+
+
+        if (highlightChange) {
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        valueColor = highlightColor;
+                        Thread.sleep(3 * 1000);
+                        valueColor = Color.white;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        } else {
+            valueColor = Color.white;
+        }
+
+
     }
 
     @Override
@@ -60,14 +87,14 @@ public class GradientBadgeComponent extends Component {
 
             g2d.drawImage(image, parent.x + x + 107, parent.y + y + (image.getWidth() / 2) - 2, 18, calcHeight, observer);
 
-            g.setColor(Color.white);
+            g.setColor(valueColor);
             g.setFont(CustomFont.light.deriveFont((float) valueFontSize));
 
             int stringWidth = g.getFontMetrics().stringWidth(value);
             int stringHeight = g.getFontMetrics().getHeight();
 
             g.drawString(value, parent.x + x + (width - stringWidth) / 2 - 5, parent.y + y + (height - stringHeight) / 2 + g.getFontMetrics().getAscent() + 6);
-
+            g.setColor(Color.white);
             g.setFont(CustomFont.light.deriveFont((float) keyFontSize));
 
             int stringWidth2 = g.getFontMetrics().stringWidth(key);

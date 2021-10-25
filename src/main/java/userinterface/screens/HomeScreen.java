@@ -84,16 +84,65 @@ public class HomeScreen extends Screen {
     }
 
     public void updateBalance(double multiplier) {
-        double current = Double.parseDouble(balanceBadge.value);
-        balanceBadge.value = String.valueOf(new DecimalFormat("##.00").format(current * multiplier)).replace(",", ".");
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    double current = Double.parseDouble(balanceBadge.value);
+                    String newValue = String.valueOf(new DecimalFormat("##.00").format(current * multiplier)).replace(",", ".");
+
+                    if (multiplier > 1) {
+                        balanceBadge.setValue(newValue, true, ColorUtils.green);
+                    } else {
+                        balanceBadge.setValue(newValue, true, ColorUtils.red);
+                    }
+
+                    Thread.sleep(1000);
+
+                    balanceBadge.setValue(newValue, false, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     public void increaseStreak() {
-        streakBadge.value = String.valueOf(Integer.parseInt(streakBadge.value) + 1);
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String newValue = String.valueOf(Integer.parseInt(streakBadge.value) + 1);
+
+                    streakBadge.setValue(newValue, true, ColorUtils.green);
+
+                    Thread.sleep(1000);
+
+                    streakBadge.setValue(newValue, false, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     public void resetStreak() {
-        streakBadge.value = "0";
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String newValue = "0";
+
+                    streakBadge.setValue(newValue, true, ColorUtils.green);
+
+                    Thread.sleep(1000);
+
+                    streakBadge.setValue(newValue, false, null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     @Override
