@@ -160,14 +160,28 @@ public class WindowHandler {
                 if (screen instanceof StartScreen) {
                     StartScreen startScreen = (StartScreen) screen;
 
+                    double contentInAnimationProgress = 0.1;
+                    double contentTopOutAnimationProgress = 0.1;
+                    double contentBottomOutAnimationProgress = 0.1;
+
+                    int run = 0;
+
                     while (true) {
                         try {
                             Thread.sleep(1);
 
                             if (nextScreen.x < 0) {
-                                startScreen.animationContentTopY -= 2;
-                                startScreen.y += 2;
-                                nextScreen.x += 2;
+                                startScreen.animationContentTopY = ((easeInOutCubic(contentTopOutAnimationProgress) / 860) * -1);
+                                startScreen.y = (easeInOutCubic(contentBottomOutAnimationProgress) / 860);
+
+                                if (run > 100) {
+                                    nextScreen.x = (easeInOutCubic(contentInAnimationProgress) / 640) - 640;
+                                    contentInAnimationProgress += 0.1;
+                                }
+
+                                contentTopOutAnimationProgress += 0.1;
+                                contentBottomOutAnimationProgress += 0.1;
+                                run++;
                             } else {
                                 screen = nextScreen;
                                 nextScreen = null;
@@ -197,6 +211,10 @@ public class WindowHandler {
                 }
             }
         }.start();
+    }
+
+    private static int easeInOutCubic(double x) {
+        return (int) Math.round(x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
     }
 
 }
