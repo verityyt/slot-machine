@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 
 public class HomeScreen extends Screen {
 
@@ -37,9 +39,16 @@ public class HomeScreen extends Screen {
     private GradientBadgeComponent streakBadge;
 
     public HomeScreen() {
-        firstWheel = new SpinWheelComponent(this, 1, 100, 180, 50, 50);
-        secondWheel = new SpinWheelComponent(this, 2, 255, 180, 50, 50);
-        thirdWheel = new SpinWheelComponent(this, 3, 410, 180, 50, 50);
+        ArrayList<Integer> times = new ArrayList<>();
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+        times.add(new Random().nextInt(10000 - 5000) + 5000);
+
+        Collections.sort(times);
+
+        firstWheel = new SpinWheelComponent(this, 1, 100, 180, 50, 50, times.get(0));
+        secondWheel = new SpinWheelComponent(this, 2, 255, 180, 50, 50, times.get(1));
+        thirdWheel = new SpinWheelComponent(this, 3, 410, 180, 50, 50, times.get(2));
 
         try {
             GradientButtonComponent spinButton = new GradientButtonComponent(this, 230, 665, 180, 50, "SPIN", 24, ImageIO.read(new File("assets/images/home/spin.png")), Color.decode("#4834D4"), Color.decode("#B500FF"), 50);

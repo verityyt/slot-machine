@@ -28,8 +28,9 @@ public class SpinWheelComponent extends Component {
     private int secondCircleY;
     private int thirdCircleY;
     private int fourthCircleY;
+    private int timeTillStopping;
 
-    public SpinWheelComponent(Screen parent, int number, int x, int y, int width, int height) {
+    public SpinWheelComponent(Screen parent, int number, int x, int y, int width, int height, int timeTillStopping) {
         super(parent, x, y, width, height);
         this.index = number;
         this.firstCircleY = y;
@@ -39,6 +40,7 @@ public class SpinWheelComponent extends Component {
         this.width = 125;
         this.height = 435;
         this.parent = parent;
+        this.timeTillStopping = timeTillStopping;
     }
 
     @Override
@@ -111,8 +113,6 @@ public class SpinWheelComponent extends Component {
             @Override
             public void run() {
                 try {
-                    int timeTillStopping = new Random().nextInt(10000 - 5000) + 5000;
-
                     Thread.sleep(timeTillStopping);
                     Logger.debug("Stopping spin wheel #" + index + " after " + timeTillStopping + "ms");
 
