@@ -40,7 +40,7 @@ public class Logger {
                 System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_BLUE + "LOGIC" + ANSI_GREY + "] " + ANSI_RESET + text);
             }
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [LOGIC] " + text);
         }
     }
 
@@ -51,7 +51,7 @@ public class Logger {
                 System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_GREEN + "UI" + ANSI_GREY + "] " + ANSI_RESET + text);
             }
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [UI] " + text);
         }
     }
 
@@ -62,7 +62,7 @@ public class Logger {
                 System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_CYAN + "DEBUG" + ANSI_GREY + "] " + ANSI_RESET + text);
             }
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [DEBUG] " + text);
         }
     }
 
@@ -73,7 +73,7 @@ public class Logger {
                 System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_PURPLE + "TRACE" + ANSI_GREY + "] " + ANSI_RESET + text);
             }
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [TRACE] " + text);
         }
     }
 
@@ -82,7 +82,7 @@ public class Logger {
         if (enableColors) {
             System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_YELLOW + "WARN" + ANSI_GREY + "] " + ANSI_RESET + text);
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [WARN] " + text);
         }
     }
 
@@ -92,7 +92,7 @@ public class Logger {
             System.out.println(ANSI_GREY + "[" + date + "]: [" + ANSI_RED + "ERROR" + ANSI_GREY + "] " + ANSI_RESET + text);
             System.exit(-1);
         } else {
-            System.out.println("[" + date + "]: [ANIMATION] " + text);
+            System.out.println("[" + date + "]: [ERROR] " + text);
         }
     }
 
